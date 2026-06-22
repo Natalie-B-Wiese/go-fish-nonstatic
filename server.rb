@@ -17,6 +17,6 @@ class Server < Sinatra::Base
   end
 
   post '/submit' do
-    'Hello world'
+    slim :game
   end
 end
