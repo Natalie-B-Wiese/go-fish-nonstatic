@@ -17,6 +17,6 @@ class Server < Sinatra::Base
   end
 
   post '/submit' do
-    slim :game
+    slim :game, locals: { name: params[:name] }
   end
 end

@@ -9,6 +9,14 @@ RSpec.describe Server do
     expect(page).to have_content('John')
   end
 
+  it 'works with other names' do
+    visit '/'
+    fill_in :name, with: 'Henry'
+    click_on 'Join'
+    expect(page).to have_content('Players')
+    expect(page).to have_content('Henry')
+  end
+
   it 'allows multiple players to join' do
     session1 = Capybara::Session.new(:rack_test, Server.new)
     session2 = Capybara::Session.new(:rack_test, Server.new)
