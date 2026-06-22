@@ -6,6 +6,7 @@ RSpec.describe Server do
     fill_in :name, with: 'John'
     click_on 'Join'
     expect(page).to have_content('Players')
+    expect(page).to have_css("meta[name='api_key'][content]", visible: false)
     expect(page).to have_content('John')
   end
 

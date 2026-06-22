@@ -1,6 +1,7 @@
 require_relative '../deck'
 require_relative 'turn_result'
 require_relative 'book'
+require_relative 'player'
 
 class Game
   SMALL_GAME_CARDS = 7
@@ -17,8 +18,8 @@ class Game
     @current_player_index = 0
   end
 
-  def add_player(player)
-    @players.push(player)
+  def add_player(player_name)
+    @players.push(player_name)
   end
 
   def game_over?
