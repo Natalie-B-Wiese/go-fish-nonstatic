@@ -22,7 +22,7 @@ class Server < Sinatra::Base
 
   post '/join' do
     # generate a key using base-64 from the name
-    api_key = Base64.urlsafe_encode64("#{params[:name]}:#{Time.now.to_i}")
+    api_key = Base64.urlsafe_encode64("#{params[:name]}:#{(Time.now.to_f * 1000).to_i}")
     session[:api_key] = api_key
 
     # self.class.api_keys[api_key] = params[:name]
