@@ -7,4 +7,8 @@ class Server < Sinatra::Base
   def self.game
     @@game ||= Game.new
   end
+
+  def self.reset!
+    @@game = nil
+  end
 end
