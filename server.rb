@@ -1,6 +1,6 @@
 require 'sinatra'
-require_relative 'lib/game'
-require_relative 'lib/player'
+require_relative 'lib/go_fish/game'
+require_relative 'lib/go_fish/player'
 
 class Server < Sinatra::Base
   enable :sessions
