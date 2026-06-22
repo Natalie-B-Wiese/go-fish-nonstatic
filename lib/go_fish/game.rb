@@ -19,7 +19,8 @@ class Game
   end
 
   def add_player(player_name)
-    @players.push(player_name)
+    player = Player.new(player_name)
+    @players.push(player)
   end
 
   def game_over?

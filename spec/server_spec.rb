@@ -1,6 +1,15 @@
 require_relative '../server'
 
 RSpec.describe Server do
+  def create_players_from_sessions(sessions)
+    sessions.each_with_index do |session, i|
+      session.visit '/'
+      name = "Player #{i + 1}"
+      session.fill_in :name, with: name
+      session.click_on 'Join'
+    end
+  end
+
   it 'is possible to join a game', :js do
     visit '/'
     fill_in :name, with: 'John'
@@ -59,6 +68,39 @@ RSpec.describe Server do
       visit '/'
       expect(page).to have_content('Players')
       expect(page).to have_content('John')
+    end
+  end
+
+  context 'when multiple players are joined' do
+    let!(:session1) { Capybara::Session.new(:rack_test, Server.new) }
+    let!(:session2) { Capybara::Session.new(:rack_test, Server.new) }
+    let!(:session3) { Capybara::Session.new(:rack_test, Server.new) }
+    let(:sessions) { [session1, session2, session3] }
+
+    before do
+      create_players_from_sessions(sessions)
+
+      # refresh the sessions
+      sessions.each do |session|
+        session.visit '/'
+      end
+    end
+
+    it 'shows list of other players' do
+      expect(session1).to have_content('Player 2')
+      expect(session1).to have_content('Player 3')
+
+      expect(session2).to have_content('Player 1')
+      expect(session2).to have_content('Player 3')
+
+      expect(session3).to have_content('Player 1')
+      expect(session3).to have_content('Player 3')
+    end
+
+    xit 'shows whose turn it is' do
+      expect(session1).to have_content('Your Turn')
+      expect(session2).to have_content("Player 1's Turn")
+      expect(session3).to have_content("Player 1's Turn")
     end
   end
 end

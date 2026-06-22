@@ -1,3 +1,34 @@
-h1 Players
 meta name="api_key" content=api_key
 p #{name}
+
+main.game-view
+	div.panel.panel--padded.game-view__game-board
+		header.panel__header.gap-xs
+			button.btn.btn--no-border.btn--icon.btn--small
+				i.ph.ph-caret-left.icon.icon--large
+			h2 Game 1
+		div.panel__content.op-stack.gap-xs.players
+			h3 Players
+
+			// make one of these for each player
+			//TODO: make it exclude this player
+			- game.players.each do |player|
+				div.players__hand.op-stack.gap-xs
+					details.accordion
+						summary
+							div.accordion_marker
+								i.ph.ph-caret-right.icon.icon--small
+							span.accordion__header #{player.name}
+							div Cards:
+								span
+									strong TODO: card count here
+							div Books:
+								span
+									strong TODO: book count here
+
+						div.accordion__content
+							div.flex.flex-row.flex-no-wrap.justify-between
+								div.flex.cards-stacked
+									TODO: list of playing card backs with class "playing-card playing-card--sm"
+								div.flex.cards-stacked
+									TODO: list of books with class "playing-card playing-card--sm"

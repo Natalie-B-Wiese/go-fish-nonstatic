@@ -25,7 +25,8 @@ class Server < Sinatra::Base
   end
 
   get '/game' do
-    slim :game, locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key] }
+    slim :game,
+         locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key], game: self.class.game }
   end
 
   post '/join' do
@@ -34,6 +35,7 @@ class Server < Sinatra::Base
     session[:api_key] = api_key
 
     self.class.api_keys[api_key] = params[:name]
+    self.class.game.add_player(params[:name])
 
     redirect '/game'
   end

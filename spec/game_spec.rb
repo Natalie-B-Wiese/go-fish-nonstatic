@@ -18,15 +18,15 @@ describe Game do
     let(:game) { described_class.new }
 
     it 'can add a player' do
-      game.add_player(player1)
-      expect(game.players).to include player1
+      game.add_player(player1_name)
+      expect(game.players[0].name).to eq player1_name
     end
 
     it 'works with multiple players' do
-      game.add_player(player1)
-      game.add_player(player2)
-      expect(game.players).to include player1
-      expect(game.players).to include player2
+      game.add_player(player1_name)
+      game.add_player(player2_name)
+      expect(game.players[0].name).to eq player1_name
+      expect(game.players[1].name).to eq player2_name
     end
   end
 
