@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="stylesheet" href="/stylesheets/application.css" />
+    <title>Go Fish Static</title>
+  </head>
+  <body>
+    <main class="game-view">
+
+      <div class="panel panel--padded game-view__game-board">
+        <header class="panel__header gap-xs">
+          <button class="btn btn--no-border btn--icon btn--small">
+            <i class="ph ph-caret-left icon icon--large"></i>
+          </button>
+          <h2>Game 1</h2>
+        </header>
+
+        <div class="panel__content op-stack gap-xs players">
+          <h3>Players</h3>
+
+          <!-- this is for a single player-->
+          <div class="players__hand op-stack gap-xs">
+            <details class="accordion">
+              <summary>
+                <div class="accordion__marker">
+                  <i class="ph ph-caret-right icon icon--small"></i>
+                </div>
+                <span class="accordion__header">TODO: Player name here</span>
+                <div class="text-pair text-pair--inline">
+                  <div>Cards: <span><strong>TODO: cards here</strong></span></div>
+                  <div>Books: <span><strong>TODO: books here</strong></span></div>
+                </div>
+              </summary>
+              <div class="accordion__content">
+                <div class="flex flex-row flex-no-wrap justify-between">
+                  <div class="flex cards-stacked">
+                    TODO: list of playing card backs with class "playing-card playing-card--sm"
+                  </div>
+                  <div class="flex cards-stacked">
+                    TODO: list of books with class "playing-card playing-card--sm"
+                  </div>
+                </div>
+
+              </div>
+            </details>
+
+
+
+
+          </div>
+        </div>
+      </div>
+
+
+      <div class="game-view__game-feed panel panel--padded panel--primary">
+        <header class="panel__header op-split">
+          <h2>Game Feed</h2>
+          <div class="badge badge--primary">TODO: show whose turn it is</div>
+        </header>
+
+        <div class="panel__content op-stack flex-grow-1 gap-none">
+          <div class="feed-content op-stack gap-xs flex-grow-1">
+
+            <div class="feed-bubble feed-bubble--action">
+              <div class="feed-bubble__content">
+                Joby asked <strong>Natalie</strong> for any <strong>8</strong>s
+              </div>
+            </div>
+
+            <div class="feed-bubble feed-bubble--response feed-bubble--unsuccess">
+              <i class="ph ph-arrow-bend-down-right icon icon--medium"></i>
+              <div class="feed-bubble__content">
+                Go Fish: Natalie doesn't have any 8s
+              </div>
+            </div>
+
+            <div class="feed-bubble feed-bubble--response">
+              <i class="ph ph-arrow-bend-down-right icon icon--medium"></i>
+
+              <div class="feed-bubble__content">
+                You drew a 7 of Diamonds.
+              </div>
+            </div>
+
+            <div class="feed-bubble feed-bubble--action">
+              <div class="feed-bubble__content">
+                Joby asked <strong>Natalie</strong> for any <strong>8</strong>s
+              </div>
+            </div>
+
+          </div>
+
+          <div class="game-actions op-stack items-stretch gap-sm">
+            <div class="game-actions__options op-split items-stretch gap-sm">
+              <div class="form-group flex-grow-1">
+                <label class="form-label" for="player">Player</label>
+                <select class="form-control form-control--large" id="player">
+                  <option>TODO: show list of players excluding self</option>
+                </select>
+              </div>
+
+              <div class="form-group flex-grow-1">
+                <label class="form-label" for="rank">Card Rank</label>
+                <select class="form-control form-control--large" id="rank">
+                  <option>TODO: show list of card ranks this player has</option>
+                </select>
+              </div>
+            </div>
+
+            <button class="btn btn--primary">TODO: show text like 'Ask Bily for Twos'</button>
+
+          </div>
+        </div>
+
+
+      </div>
+
+      <div class="game-view__hand panel panel--secondary">
+        <header class="panel__header">
+          <h2>Hand</h2>
+        </header>
+
+
+        <div class="panel__content">
+          <div class="cards-stacked flex margin-top-md">
+            TODO: show cards with class "playing-card playing-card--lg playing-card--hover"
+          </div>
+        </div>
+      </div>
+
+      <div class="game-view__books panel panel--secondary">
+        <header class="panel__header">
+          <h2>Books</h2>
+        </header>
+
+        <div class="panel__content">
+          <div class="cards-stacked flex">
+            TODO: show books with class "playing-card playing-card--sm"
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+
+  </body>
+</html>
