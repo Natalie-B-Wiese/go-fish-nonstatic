@@ -47,4 +47,16 @@ RSpec.describe Server do
 
     expect(api_keys[0]).not_to eq api_keys[1]
   end
+
+  context 'when a player has already joined' do
+    it 'redirects to game' do
+      visit '/'
+      fill_in :name, with: 'John'
+      click_on 'Join'
+
+      visit '/'
+      expect(page).to have_content('Players')
+      expect(page).to have_content('John')
+    end
+  end
 end

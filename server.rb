@@ -17,7 +17,15 @@ class Server < Sinatra::Base
   end
 
   get '/' do
-    slim :login
+    if self.class.api_keys[session[:api_key]]
+      redirect '/game'
+    else
+      slim :login
+    end
+  end
+
+  get '/game' do
+    slim :game, locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key] }
   end
 
   post '/join' do
@@ -25,8 +33,8 @@ class Server < Sinatra::Base
     api_key = Base64.urlsafe_encode64("#{params[:name]}:#{(Time.now.to_f * 1000).to_i}")
     session[:api_key] = api_key
 
-    # self.class.api_keys[api_key] = params[:name]
+    self.class.api_keys[api_key] = params[:name]
 
-    slim :game, locals: { name: params[:name], api_key: api_key }
+    redirect '/game'
   end
 end
