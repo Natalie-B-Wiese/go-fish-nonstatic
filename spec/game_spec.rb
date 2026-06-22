@@ -14,6 +14,22 @@ describe Game do
   let!(:player3) { Player.new(player3_name) }
   let!(:player4) { Player.new(player4_name) }
 
+  describe '#add_player' do
+    let(:game) { described_class.new }
+
+    it 'can add a player' do
+      game.add_player(player1)
+      expect(game.players).to include player1
+    end
+
+    it 'works with multiple players' do
+      game.add_player(player1)
+      game.add_player(player2)
+      expect(game.players).to include player1
+      expect(game.players).to include player2
+    end
+  end
+
   describe '#start' do
     context 'with 2 or 3 players' do
       let(:players) { [player1, player2] }

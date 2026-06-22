@@ -11,10 +11,14 @@ class Game
 
   attr_accessor :current_player_index, :go_again
 
-  def initialize(players)
+  def initialize(players = [])
     @players = players
     @deck = Deck.new
     @current_player_index = 0
+  end
+
+  def add_player(player)
+    @players.push(player)
   end
 
   def game_over?
