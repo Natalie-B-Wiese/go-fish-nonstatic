@@ -1,5 +1,6 @@
 require 'sinatra'
+require 'slim'
 
 get '/' do
-  'Hello Gabe'
+  slim :login
 end
