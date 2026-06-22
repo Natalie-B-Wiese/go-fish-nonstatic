@@ -23,9 +23,11 @@ RSpec.describe Server do
     session2 = Capybara::Session.new(:rack_test, Server.new)
     [session1, session2].each_with_index do |session, i|
       session.visit '/'
-      session.fill_in :name, with: "Player #{i + 1}"
+      name = "Player #{i + 1}"
+      session.fill_in :name, with: name
       session.click_on 'Join'
       expect(session).to have_content('Players')
+      expect(session).to have_content(name)
     end
   end
 
