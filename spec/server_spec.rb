@@ -1,7 +1,7 @@
 require_relative '../server'
 
 RSpec.describe Server do
-  it 'is possible to join a game' do
+  it 'is possible to join a game', :js do
     visit '/'
     fill_in :name, with: 'John'
     click_on 'Join'

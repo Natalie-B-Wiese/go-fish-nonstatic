@@ -1,5 +1,6 @@
 require 'rack/test'
 require 'capybara'
+require 'capybara-playwright-driver'
 require 'capybara/dsl'
 ENV['RACK_ENV'] = 'test'
 require_relative '../server'

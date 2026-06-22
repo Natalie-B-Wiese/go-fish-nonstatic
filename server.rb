@@ -11,4 +11,12 @@ class Server < Sinatra::Base
   def self.reset!
     @@game = nil
   end
+
+  get '/' do
+    slim :login
+  end
+
+  post '/submit' do
+    'Hello world'
+  end
 end
