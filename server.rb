@@ -54,6 +54,15 @@ class Server < Sinatra::Base
     redirect '/game'
   end
 
+  post '/request-card' do
+    opponent_name = params[:opponent_name]
+    request_rank = params[:rank]
+    opponent_player = self.class.game.player_by_name(opponent_name)
+
+    self.class.game.play_turn(rank: request_rank, opponent: opponent_player)
+    redirect '/game'
+  end
+
   get '/lobby' do
     if self.class.game.started? || !self.class.api_keys[session[:api_key]]
       redirect '/'

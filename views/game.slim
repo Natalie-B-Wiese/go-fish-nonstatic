@@ -50,19 +50,19 @@ main.game-view
 			.feed-content.op-stack.gap-xs.flex-grow-1
 				| TODO: insert feed bubbles here
 
-			.game-actions.op-stack.items-stretch.gap-sm
+			form.game-actions.op-stack.items-stretch.gap-sm action="/request-card" method="POST"
 				.game-actions__options.op-split.items-stretch.gap-sm
 					.form-group.flex-grow-1
-						label.form-label[for="player"]
+						label.form-label[for="opponent_name"]
 							| Player
-						select#player.form-control.form-control--large
+						select#opponent_name.form-control.form-control--large name="opponent_name"
 							- game.players.each do |player|
 								- next if player.name==name
 								option=player.name
 					.form-group.flex-grow-1
 						label.form-label[for="rank"]
 							| Card Rank
-						select#rank.form-control.form-control--large
+						select#rank.form-control.form-control--large name="rank"
 							- my_player.card_ranks.each do |card_rank|
 								option #{card_rank}
 				- if game.current_player.name==name

@@ -3,12 +3,20 @@ require_relative '../lib/go_fish/game'
 require_relative '../lib/card'
 
 RSpec.describe Server do
+  let(:game) { Server.game }
+
   def create_players_from_sessions(sessions)
     sessions.each_with_index do |session, i|
       session.visit '/'
       name = "Player #{i + 1}"
       session.fill_in :name, with: name
       session.click_on 'Join'
+    end
+  end
+
+  def refresh_sessions(sessions, page = '/')
+    sessions.each do |session|
+      session.visit page
     end
   end
 
@@ -39,16 +47,11 @@ RSpec.describe Server do
 
     create_players_from_sessions(sessions)
 
-    # refresh the sessions
-    sessions.each do |session|
-      session.visit '/'
-    end
+    refresh_sessions(sessions)
 
     session1.click_on 'Start'
 
-    sessions.each do |session|
-      session.visit '/lobby'
-    end
+    refresh_sessions(sessions, '/lobby')
 
     expect(session1).to have_current_path('/game')
     expect(session2).to have_current_path('/game')
@@ -138,10 +141,7 @@ RSpec.describe Server do
       before do
         create_players_from_sessions(sessions)
 
-        # refresh the sessions
-        sessions.each do |session|
-          session.visit '/'
-        end
+        refresh_sessions(sessions)
       end
 
       it 'shows list of other players' do
@@ -172,15 +172,10 @@ RSpec.describe Server do
     before do
       create_players_from_sessions(sessions)
 
-      # refresh the sessions
-      sessions.each do |session|
-        session.visit '/'
-      end
+      refresh_sessions(sessions)
 
       session1.click_on 'Start'
-      sessions.each do |session|
-        session.visit '/'
-      end
+      refresh_sessions(sessions)
     end
 
     it 'redirects to game' do
@@ -224,7 +219,6 @@ RSpec.describe Server do
     end
 
     it 'has correct rank dropdown options' do
-      game = Server.game
       game.players[0].cards = [Card.new('2', 'Spades'), Card.new('5', 'Hearts')]
       game.players[1].cards = [Card.new('3', 'Spades'), Card.new('6', 'Hearts'), Card.new('8', 'Spades')]
       session1.visit '/'
@@ -237,8 +231,7 @@ RSpec.describe Server do
       expect(dropdown_options2).to eq %w[3 6 8]
     end
 
-    it 'sorts the ranks' do
-      game = Server.game
+    it 'sorts the ranks in rank dropdown' do
       game.players[0].cards = [Card.new('5', 'Hearts'), Card.new('A', 'Spades'),
                                Card.new('2', 'Spades'), Card.new('8', 'Spades')]
       session1.visit '/'
@@ -257,7 +250,7 @@ RSpec.describe Server do
       expect(dropdown_options1).to eq %w[2 5]
     end
 
-    it 'shows how many cards each player has' do
+    it 'shows how many cards each player has in accordion' do
       expect(session1).to have_content("Cards: #{Game::SMALL_GAME_CARDS}")
       expect(session2).to have_content("Cards: #{Game::SMALL_GAME_CARDS}")
       expect(session3).to have_content("Cards: #{Game::SMALL_GAME_CARDS}")
@@ -267,6 +260,37 @@ RSpec.describe Server do
       expect(session1).to have_button('Request', disabled: false)
       expect(session2).to have_button('Request', disabled: true)
       expect(session3).to have_button('Request', disabled: true)
+    end
+  end
+
+  context 'when current player makes a request' do
+    let!(:session1) { Capybara::Session.new(:rack_test, Server.new) }
+    let!(:session2) { Capybara::Session.new(:rack_test, Server.new) }
+    let!(:session3) { Capybara::Session.new(:rack_test, Server.new) }
+    let(:sessions) { [session1, session2, session3] }
+
+    before do
+      create_players_from_sessions(sessions)
+
+      refresh_sessions(sessions)
+
+      session1.click_on 'Start'
+      refresh_sessions(sessions)
+
+      session1.click_on 'Request'
+    end
+
+    it 'reroutes to game' do
+      expect(session1).to have_current_path('/game')
+    end
+
+    it 'preforms the move' do
+      session1.within '.game-view__hand' do
+        expect(session1.find_all('.playing-card').count).to_not eq Game::SMALL_GAME_CARDS
+      end
+    end
+
+    xit 'posts a message in the feed' do
     end
   end
 end
