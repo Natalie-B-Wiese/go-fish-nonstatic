@@ -20,8 +20,9 @@ RSpec.describe Server do
     end
   end
 
-  def elements_within_parent(session:, parent_selector:, parent_index:, element_selector:)
-    session.within(session.all(parent_selector)[parent_index]) do
+  def elements_within_parent(session:, parent_selector:, element_index:, element_selector:)
+    parent = session.find_all(parent_selector)[element_index]
+    session.within parent do
       return session.find_all(element_selector)
     end
   end
@@ -204,7 +205,7 @@ RSpec.describe Server do
     it 'does not have an accordion for own player' do
       sessions.each_with_index do |session, index|
         player_accordions = elements_within_parent(session: session, parent_selector: '.players',
-                                                   parent_index: 0, element_selector: '.accordion')
+                                                   element_index: 0, element_selector: '.accordion')
         expect(player_accordions.count).to eq sessions.count - 1
         expect(player_accordions[0]).to_not have_content("Player #{index + 1}")
       end
@@ -218,15 +219,15 @@ RSpec.describe Server do
 
     xit 'shows the correct number of card images in each player accordion hand' do
       player1_accordion_card_count = elements_within_parent(session: session2, parent_selector: '.accordion',
-                                                            parent_index: 0, element_selector: '.playing-card').count
+                                                            element_index: 0, element_selector: '.playing-card').count
       expect(player1_accordion_card_count).to eq Game::SMALL_GAME_CARDS
 
       player2_accordion_card_count = elements_within_parent(session: session1, parent_selector: '.accordion',
-                                                            parent_index: 0, element_selector: '.playing-card').count
+                                                            element_index: 0, element_selector: '.playing-card').count
       expect(player2_accordion_card_count).to eq Game::SMALL_GAME_CARDS
 
       player3_accordion_card_count = elements_within_parent(session: session1, parent_selector: '.accordion',
-                                                            parent_index: 1, element_selector: '.playing-card').count
+                                                            element_index: 1, element_selector: '.playing-card').count
       expect(player3_accordion_card_count).to eq Game::SMALL_GAME_CARDS
     end
 
