@@ -1,0 +1,8 @@
+h1 Lobby
+meta name="api_key" content=api_key
+
+- game.players.each do |player|
+	p #{player.name}
+
+form action="/start" method="POST"
+  button type="submit" Start

@@ -10,68 +10,105 @@ RSpec.describe Server do
     end
   end
 
-  it 'is possible to join a game', :js do
-    visit '/'
-    fill_in :name, with: 'John'
-    click_on 'Join'
-    expect(page).to have_content('Players')
-    expect(page).to have_css("meta[name='api_key'][content]", visible: false)
-    expect(page).to have_content('John')
-  end
-
-  it 'works with other names' do
-    visit '/'
-    fill_in :name, with: 'Henry'
-    click_on 'Join'
-    expect(page).to have_content('Players')
-    expect(page).to have_content('Henry')
-  end
-
-  it 'allows multiple players to join' do
-    session1 = Capybara::Session.new(:rack_test, Server.new)
-    session2 = Capybara::Session.new(:rack_test, Server.new)
-    [session1, session2].each_with_index do |session, i|
-      session.visit '/'
-      name = "Player #{i + 1}"
-      session.fill_in :name, with: name
-      session.click_on 'Join'
-      expect(session).to have_content('Players')
-      expect(session).to have_content(name)
-    end
-  end
-
-  it 'gives players of the same name different api keys' do
-    session1 = Capybara::Session.new(:rack_test, Server.new)
-    session2 = Capybara::Session.new(:rack_test, Server.new)
-    api_keys = []
-    [session1, session2].each do |session|
-      session.visit '/'
-      session.fill_in :name, with: 'John'
-      session.click_on 'Join'
-      sleep(1) # Pauses the test for 1 second
-
-      meta_tag = session.find("meta[name='api_key']", visible: false)
-      api_key = meta_tag[:content]
-
-      api_keys.push(api_key)
-    end
-
-    expect(api_keys[0]).not_to eq api_keys[1]
-  end
-
-  context 'when a player has already joined' do
-    it 'redirects to game' do
+  context 'before game is started' do
+    it 'is possible to join a lobby', :js do
       visit '/'
       fill_in :name, with: 'John'
       click_on 'Join'
-
-      visit '/'
-      expect(page).to have_content('Players')
+      expect(page).to have_content('Lobby')
+      expect(page).to have_css("meta[name='api_key'][content]", visible: false)
       expect(page).to have_content('John')
+    end
+
+    it 'works with other names' do
+      visit '/'
+      fill_in :name, with: 'Henry'
+      click_on 'Join'
+      expect(page).to have_content('Lobby')
+      expect(page).to have_content('Henry')
+    end
+
+    it 'allows multiple players to join' do
+      session1 = Capybara::Session.new(:rack_test, Server.new)
+      session2 = Capybara::Session.new(:rack_test, Server.new)
+      [session1, session2].each_with_index do |session, i|
+        session.visit '/'
+        name = "Player #{i + 1}"
+        session.fill_in :name, with: name
+        session.click_on 'Join'
+        expect(session).to have_content('Lobby')
+        expect(session).to have_content(name)
+      end
+    end
+
+    it 'gives players of the same name different api keys' do
+      session1 = Capybara::Session.new(:rack_test, Server.new)
+      session2 = Capybara::Session.new(:rack_test, Server.new)
+      api_keys = []
+      [session1, session2].each do |session|
+        session.visit '/'
+        session.fill_in :name, with: 'John'
+        session.click_on 'Join'
+        sleep(1) # Pauses the test for 1 second
+
+        meta_tag = session.find("meta[name='api_key']", visible: false)
+        api_key = meta_tag[:content]
+
+        api_keys.push(api_key)
+      end
+
+      expect(api_keys[0]).not_to eq api_keys[1]
+    end
+
+    context 'when a player has already entered a name' do
+      it 'redirects to lobby' do
+        visit '/'
+        fill_in :name, with: 'John'
+        click_on 'Join'
+
+        visit '/'
+        expect(page).to have_content('Lobby')
+        expect(page).to have_content('John')
+      end
+    end
+
+    context 'when one player is in the lobby' do
+      it 'does not allow player to start the game' do
+      end
+    end
+
+    context 'when multiple players are in the lobby' do
+      let!(:session1) { Capybara::Session.new(:rack_test, Server.new) }
+      let!(:session2) { Capybara::Session.new(:rack_test, Server.new) }
+      let!(:session3) { Capybara::Session.new(:rack_test, Server.new) }
+      let(:sessions) { [session1, session2, session3] }
+
+      before do
+        create_players_from_sessions(sessions)
+
+        # refresh the sessions
+        sessions.each do |session|
+          session.visit '/'
+        end
+      end
+
+      it 'shows list of other players' do
+        expect(session1).to have_content('Player 2')
+        expect(session1).to have_content('Player 3')
+
+        expect(session2).to have_content('Player 1')
+        expect(session2).to have_content('Player 3')
+
+        expect(session3).to have_content('Player 1')
+        expect(session3).to have_content('Player 3')
+      end
+
+      it 'allows any player to start the game' do
+      end
     end
   end
 
-  context 'when multiple players are joined' do
+  xcontext 'when a game is started' do
     let!(:session1) { Capybara::Session.new(:rack_test, Server.new) }
     let!(:session2) { Capybara::Session.new(:rack_test, Server.new) }
     let!(:session3) { Capybara::Session.new(:rack_test, Server.new) }

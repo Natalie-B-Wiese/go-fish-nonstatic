@@ -18,7 +18,7 @@ class Server < Sinatra::Base
 
   get '/' do
     if self.class.api_keys[session[:api_key]]
-      redirect '/game'
+      redirect '/lobby'
     else
       slim :login
     end
@@ -37,6 +37,15 @@ class Server < Sinatra::Base
     self.class.api_keys[api_key] = params[:name]
     self.class.game.add_player(params[:name])
 
+    redirect '/lobby'
+  end
+
+  post '/start' do
     redirect '/game'
+  end
+
+  get '/lobby' do
+    slim :lobby,
+         locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key], game: self.class.game }
   end
 end
