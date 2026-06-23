@@ -1,11 +1,14 @@
-h1 Lobby
-meta name="api_key" content=api_key
+div.container.container--xs
+  h1 Lobby
+  meta name="api_key" content=api_key
 
-- game.players.each do |player|
-	p #{player.name}
+  p Players:
+  ul
+    - game.players.each do |player|
+      li #{player.name}
 
-form action="/start" method="POST"
-  - if game.players.length<=1
-    button type="submit" disabled="disabled" Start
-  - else
-    button type="submit" Start
+  form action="/start" method="POST"
+    - if game.players.length<=1
+      button.btn.btn--primary type="submit" disabled="disabled" Start
+    - else
+      button.btn.btn--primary type="submit" Start
