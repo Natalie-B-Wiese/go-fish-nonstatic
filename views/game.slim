@@ -19,10 +19,12 @@ main.game-view
 							div.accordion_marker
 								i.ph.ph-caret-right.icon.icon--small
 							span.accordion__header #{player.name}
-							div Cards:
+							div
+								| Cards:#{' '}
 								span
-									strong TODO: card count here
-							div Books:
+									strong #{player.card_count}
+							div
+								| Books:#{' '}
 								span
 									strong TODO: book count here
 

@@ -1,4 +1,5 @@
 require_relative '../server'
+require_relative '../lib/go_fish/game'
 
 RSpec.describe Server do
   def create_players_from_sessions(sessions)
@@ -170,6 +171,12 @@ RSpec.describe Server do
 
       dropdown_options3 = session3.find_field('Player').all('option').map(&:text)
       expect(dropdown_options3).to eq ['Player 1', 'Player 2']
+    end
+
+    it 'shows how many cards each player has' do
+      expect(session1).to have_content("Cards: #{Game::SMALL_GAME_CARDS}")
+      expect(session2).to have_content("Cards: #{Game::SMALL_GAME_CARDS}")
+      expect(session3).to have_content("Cards: #{Game::SMALL_GAME_CARDS}")
     end
   end
 end
