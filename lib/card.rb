@@ -31,4 +31,23 @@ class Card
   def to_s
     "#{rank} of #{suit}"
   end
+
+  def rank_to_s
+    case rank
+    when 'A'
+      'Ace'
+    when 'J'
+      'Jack'
+    when 'Q'
+      'Queen'
+    when 'K'
+      'King'
+    else
+      rank
+    end
+  end
+
+  def to_image_name
+    "#{rank_to_s.downcase}_of_#{suit.downcase}.png"
+  end
 end

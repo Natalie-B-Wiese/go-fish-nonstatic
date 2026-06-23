@@ -1,6 +1,8 @@
 meta name="api_key" content=api_key
 p #{name}
 
+- my_player = game.player_by_name(name)
+
 main.game-view
 	div.panel.panel--padded.game-view__game-board
 		header.panel__header.gap-xs
@@ -60,9 +62,17 @@ main.game-view
 						label.form-label[for="rank"]
 							| Card Rank
 						select#rank.form-control.form-control--large
-							- game.player_by_name(name).card_ranks.each do |card_rank|
+							- my_player.card_ranks.each do |card_rank|
 								option #{card_rank}
 				- if game.current_player.name==name
 					button.btn.btn--primary type="submit" Request
 				- else
 					button.btn.btn--primary type="submit" disabled="disabled" Request
+
+	div.game-view__hand.panel.panel--secondary
+		header.panel_header
+			h2 Hand
+		div.panel__content
+			div.cards-stacked.flex.margin-top-md
+				- my_player.cards.each do |card|
+					img.playing-card.playing-card--lg.playing-card--hover src="/images/cards/#{card.to_image_name}"

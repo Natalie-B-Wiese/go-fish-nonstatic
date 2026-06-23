@@ -200,6 +200,12 @@ RSpec.describe Server do
       expect(session3).to have_content('Player 3')
     end
 
+    it 'shows the player cards in the hand' do
+      session1.within '.game-view__hand' do
+        expect(session1.find_all('.playing-card').count).to eq Game::SMALL_GAME_CARDS
+      end
+    end
+
     it 'shows whose turn it is' do
       expect(session1).to have_content('Your Turn')
       expect(session2).to have_content("Player 1's Turn")
@@ -264,7 +270,3 @@ RSpec.describe Server do
     end
   end
 end
-
-# within '.hand' do
-#   expect(find_all('.playing-card').count).to eq Game::SMALL_GAME_CARDS
-# end
