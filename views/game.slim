@@ -14,7 +14,7 @@ main.game-view
 
 			// make one of these for each player
 			//TODO: make it exclude this player
-			- game.players.each do |player|
+			- game.opponent_players(my_player).each do |player|
 				div.players__hand.op-stack.gap-xs
 					details.accordion
 						summary

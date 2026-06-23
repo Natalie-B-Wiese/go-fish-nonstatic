@@ -20,6 +20,12 @@ RSpec.describe Server do
     end
   end
 
+  def elements_within_parent(session:, parent_selector:, parent_index:, element_selector:)
+    session.within(session.all(parent_selector)[parent_index]) do
+      return session.find_all(element_selector)
+    end
+  end
+
   it 'reroutes nonauthenticated from game to login' do
     visit '/game'
     expect(page).to have_current_path('/')
@@ -184,7 +190,7 @@ RSpec.describe Server do
       expect(session3).to have_content('Game')
     end
 
-    it 'shows list of other players' do
+    it 'has accordions of other players' do
       expect(session1).to have_content('Player 2')
       expect(session1).to have_content('Player 3')
 
@@ -195,10 +201,33 @@ RSpec.describe Server do
       expect(session3).to have_content('Player 3')
     end
 
+    it 'does not have an accordion for own player' do
+      sessions.each_with_index do |session, index|
+        player_accordions = elements_within_parent(session: session, parent_selector: '.players',
+                                                   parent_index: 0, element_selector: '.accordion')
+        expect(player_accordions.count).to eq sessions.count - 1
+        expect(player_accordions[0]).to_not have_content("Player #{index + 1}")
+      end
+    end
+
     it 'shows the player cards in the hand' do
       session1.within '.game-view__hand' do
         expect(session1.find_all('.playing-card').count).to eq Game::SMALL_GAME_CARDS
       end
+    end
+
+    xit 'shows the correct number of card images in each player accordion hand' do
+      player1_accordion_card_count = elements_within_parent(session: session2, parent_selector: '.accordion',
+                                                            parent_index: 0, element_selector: '.playing-card').count
+      expect(player1_accordion_card_count).to eq Game::SMALL_GAME_CARDS
+
+      player2_accordion_card_count = elements_within_parent(session: session1, parent_selector: '.accordion',
+                                                            parent_index: 0, element_selector: '.playing-card').count
+      expect(player2_accordion_card_count).to eq Game::SMALL_GAME_CARDS
+
+      player3_accordion_card_count = elements_within_parent(session: session1, parent_selector: '.accordion',
+                                                            parent_index: 1, element_selector: '.playing-card').count
+      expect(player3_accordion_card_count).to eq Game::SMALL_GAME_CARDS
     end
 
     it 'shows whose turn it is' do
@@ -297,7 +326,6 @@ RSpec.describe Server do
     end
 
     it 'posts a message in the feed' do
-      sleep(5)
       session1.within '.feed-content' do
         expect(session1.find_all('.feed-bubble').count).to_not eq 0
       end

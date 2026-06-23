@@ -24,6 +24,10 @@ class Game
     players[players.index { |player| player.name == player_name }]
   end
 
+  def opponent_players(player)
+    players - [player]
+  end
+
   def add_player(player_name)
     player = Player.new(player_name)
     @players.push(player)
