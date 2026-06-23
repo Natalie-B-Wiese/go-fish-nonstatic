@@ -12,8 +12,7 @@ main.game-view
 		div.panel__content.op-stack.gap-xs.players
 			h3 Players
 
-			// make one of these for each player
-			//TODO: make it exclude this player
+			// make one of these for each player (excluding own player)
 			- game.opponent_players(my_player).each do |player|
 				div.players__hand.op-stack.gap-xs
 					details.accordion
@@ -34,7 +33,8 @@ main.game-view
 						div.accordion__content
 							div.flex.flex-row.flex-no-wrap.justify-between
 								div.flex.cards-stacked
-									TODO: list of playing card backs with class "playing-card playing-card--sm"
+									- player.cards.each do |card|
+										img.playing-card.playing-card--sm src="/images/cards/playing-card-back.jpg"
 								div.flex.cards-stacked
 									TODO: list of books with class "playing-card playing-card--sm"
 

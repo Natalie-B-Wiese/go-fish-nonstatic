@@ -22,8 +22,9 @@ RSpec.describe Server do
 
   def elements_within_parent(session:, parent_selector:, element_index:, element_selector:)
     parent = session.find_all(parent_selector)[element_index]
+    parent.find_all(element_selector)
     session.within parent do
-      return session.find_all(element_selector)
+      return session.find_all(element_selector, visible: :all)
     end
   end
 
@@ -217,7 +218,7 @@ RSpec.describe Server do
       end
     end
 
-    xit 'shows the correct number of card images in each player accordion hand' do
+    it 'shows the correct number of card images in each player accordion hand' do
       player1_accordion_card_count = elements_within_parent(session: session2, parent_selector: '.accordion',
                                                             element_index: 0, element_selector: '.playing-card').count
       expect(player1_accordion_card_count).to eq Game::SMALL_GAME_CARDS
