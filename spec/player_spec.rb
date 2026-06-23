@@ -210,9 +210,9 @@ describe Player do
         player.add_card(Card.new('5', 'Diamonds'))
         player.add_card(Card.new('3', 'Hearts'))
       end
-      it 'shows cards seperated by commas' do
+      it 'shows sorted cards seperated by commas' do
         result = player.cards_to_s
-        expect(result).to eq '5 of Diamonds, 3 of Hearts'
+        expect(result).to eq '3 of Hearts, 5 of Diamonds'
       end
     end
   end

@@ -189,6 +189,13 @@ RSpec.describe Server do
     end
 
     it 'sorts the ranks' do
+      game = Server.game
+      game.players[0].cards = [Card.new('5', 'Hearts'), Card.new('A', 'Spades'),
+                               Card.new('2', 'Spades'), Card.new('8', 'Spades')]
+      session1.visit '/'
+
+      dropdown_options1 = session1.find_field('Rank').all('option').map(&:text)
+      expect(dropdown_options1).to eq %w[2 5 8 A]
     end
 
     it 'does not duplicate ranks in dropdown' do

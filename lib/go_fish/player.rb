@@ -2,12 +2,17 @@ require_relative 'book'
 
 class Player
   attr_reader :name
-  attr_accessor :cards, :books
+  attr_writer :cards
+  attr_accessor :books
 
   def initialize(name)
     @name = name
     @cards = []
     @books = []
+  end
+
+  def cards
+    @cards.sort_by { |card| card.value }
   end
 
   def add_card(card)
