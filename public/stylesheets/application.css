@@ -1,8 +1,7 @@
 /* Optics */
-@import '@rolemodel/optics/dist/css/optics+phosphor_icons';
 
 /* Theme Customization */
-@import './core/theme/student4-theme-core.css';
+@import url('core/theme/student4-theme-core.css');
 
 /* Core Customization */
 /*
@@ -12,21 +11,21 @@
 */
 
 /* Optics Component Customization */
-@import './components/optics-overrides/accordion.css';
-@import './components/optics-overrides/avatar.css';
-@import './components/optics-overrides/badge.css';
-@import './components/optics-overrides/page.css';
+@import url('components/optics-overrides/accordion.css');
+@import url('components/optics-overrides/avatar.css');
+@import url('components/optics-overrides/badge.css');
+@import url('components/optics-overrides/page.css');
 
 /* Component */
-@import './components/cards-stacked.css';
-@import './components/feed-bubble.css';
-@import './components/game-view.css';
-@import './components/history-view.css';
+@import url('components/cards-stacked.css');
+@import url('components/feed-bubble.css');
+@import url('components/game-view.css');
+@import url('components/history-view.css');
 
-@import './components/panel.css';
-@import './components/players.css';
-@import './components/playing-card.css';
+@import url('components/panel.css');
+@import url('components/players.css');
+@import url('components/playing-card.css');
 
 
 /* General Styles */
-@import './general/style.css';
+@import url('general/style.css');
