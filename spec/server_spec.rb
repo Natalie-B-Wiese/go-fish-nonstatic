@@ -160,5 +160,16 @@ RSpec.describe Server do
       expect(session2).to have_content("Player 1's Turn")
       expect(session3).to have_content("Player 1's Turn")
     end
+
+    it 'has correct player dropdown options' do
+      dropdown_options1 = session1.find_field('Player').all('option').map(&:text)
+      expect(dropdown_options1).to eq ['Player 2', 'Player 3']
+
+      dropdown_options2 = session2.find_field('Player').all('option').map(&:text)
+      expect(dropdown_options2).to eq ['Player 1', 'Player 3']
+
+      dropdown_options3 = session3.find_field('Player').all('option').map(&:text)
+      expect(dropdown_options3).to eq ['Player 1', 'Player 2']
+    end
   end
 end

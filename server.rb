@@ -45,6 +45,7 @@ class Server < Sinatra::Base
   end
 
   post '/start' do
+    # TODO: prevent game from starting multiple times?
     self.class.game.start
     redirect '/game'
   end

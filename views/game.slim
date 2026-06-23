@@ -51,8 +51,9 @@ main.game-view
 						label.form-label[for="player"]
 							| Player
 						select#player.form-control.form-control--large
-							option
-								| TODO: show list of players excluding self
+							- game.players.each do |player|
+								- next if player.name==name
+								option=player.name
 					.form-group.flex-grow-1
 						label.form-label[for="rank"]
 							| Card Rank
