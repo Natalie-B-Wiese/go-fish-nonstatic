@@ -18,7 +18,11 @@ class Server < Sinatra::Base
 
   get '/' do
     if self.class.api_keys[session[:api_key]]
-      redirect '/lobby'
+      if self.class.game.started?
+        redirect '/game'
+      else
+        redirect '/lobby'
+      end
     else
       slim :login
     end
@@ -41,6 +45,7 @@ class Server < Sinatra::Base
   end
 
   post '/start' do
+    self.class.game.start
     redirect '/game'
   end
 

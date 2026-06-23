@@ -10,17 +10,22 @@ class Game
 
   attr_reader :players, :deck, :inputs
 
-  attr_accessor :current_player_index, :go_again
+  attr_accessor :current_player_index, :go_again, :is_started
 
   def initialize(players = [])
     @players = players
     @deck = Deck.new
     @current_player_index = 0
+    @is_started = false
   end
 
   def add_player(player_name)
     player = Player.new(player_name)
     @players.push(player)
+  end
+
+  def started?
+    !!is_started
   end
 
   def game_over?
@@ -47,6 +52,7 @@ class Game
     else
       deal_cards_to_players(BIG_GAME_CARDS)
     end
+    self.is_started = true
   end
 
   def play_turn(rank:, opponent:)

@@ -118,7 +118,7 @@ RSpec.describe Server do
     end
   end
 
-  xcontext 'when a game is started' do
+  context 'when a game is started' do
     let!(:session1) { Capybara::Session.new(:rack_test, Server.new) }
     let!(:session2) { Capybara::Session.new(:rack_test, Server.new) }
     let!(:session3) { Capybara::Session.new(:rack_test, Server.new) }
@@ -136,6 +136,12 @@ RSpec.describe Server do
       sessions.each do |session|
         session.visit '/'
       end
+    end
+
+    it 'redirects to game' do
+      expect(session1).to have_content('Game')
+      expect(session2).to have_content('Game')
+      expect(session3).to have_content('Game')
     end
 
     it 'shows list of other players' do
