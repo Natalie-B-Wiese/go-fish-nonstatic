@@ -17,7 +17,7 @@ class Server < Sinatra::Base
   end
 
   get '/' do
-    if self.class.api_keys[session[:api_key]]
+    if authenticated?(session)
       if self.class.game.started?
         redirect '/game'
       else
@@ -29,7 +29,7 @@ class Server < Sinatra::Base
   end
 
   get '/game' do
-    if self.class.api_keys[session[:api_key]] && self.class.game.started?
+    if authenticated?(session) && self.class.game.started?
       slim :game,
            locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key], game: self.class.game }
     else
@@ -54,7 +54,18 @@ class Server < Sinatra::Base
     redirect '/game'
   end
 
+  def authenticate!
+    # return a status code of 403
+    halt 401
+  end
+
+  def authenticated?(session)
+    !!self.class.api_keys[session[:api_key]]
+  end
+
   post '/request-card' do
+    return redirect '/' unless authenticated?(session)
+
     opponent_name = params[:opponent_name]
     request_rank = params[:rank]
     opponent_player = self.class.game.player_by_name(opponent_name)
@@ -64,7 +75,7 @@ class Server < Sinatra::Base
   end
 
   get '/lobby' do
-    if self.class.game.started? || !self.class.api_keys[session[:api_key]]
+    if self.class.game.started? || !authenticated?(session)
       redirect '/'
     else
       slim :lobby,
