@@ -29,8 +29,12 @@ class Server < Sinatra::Base
   end
 
   get '/game' do
-    slim :game,
-         locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key], game: self.class.game }
+    if self.class.api_keys[session[:api_key]] && self.class.game.started?
+      slim :game,
+           locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key], game: self.class.game }
+    else
+      redirect '/'
+    end
   end
 
   post '/join' do
@@ -51,7 +55,11 @@ class Server < Sinatra::Base
   end
 
   get '/lobby' do
-    slim :lobby,
-         locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key], game: self.class.game }
+    if self.class.game.started? || !self.class.api_keys[session[:api_key]]
+      redirect '/'
+    else
+      slim :lobby,
+           locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key], game: self.class.game }
+    end
   end
 end

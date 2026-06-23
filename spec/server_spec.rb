@@ -12,6 +12,49 @@ RSpec.describe Server do
     end
   end
 
+  it 'reroutes nonauthenticated from game to login' do
+    visit '/game'
+    expect(page).to have_current_path('/')
+  end
+
+  it 'reroutes nonauthenticated from lobby to login' do
+    visit '/lobby'
+    expect(page).to have_current_path('/')
+  end
+
+  it 'reroutes users on nonstarted game to lobby' do
+    visit '/'
+    fill_in :name, with: 'John'
+    click_on 'Join'
+
+    visit '/game'
+    expect(page).to have_current_path('/lobby')
+  end
+
+  it 'when game has been started it reroutes authenticated users in lobby to game' do
+    session1 = Capybara::Session.new(:rack_test, Server.new)
+    session2 = Capybara::Session.new(:rack_test, Server.new)
+    session3 = Capybara::Session.new(:rack_test, Server.new)
+    sessions = [session1, session2, session3]
+
+    create_players_from_sessions(sessions)
+
+    # refresh the sessions
+    sessions.each do |session|
+      session.visit '/'
+    end
+
+    session1.click_on 'Start'
+
+    sessions.each do |session|
+      session.visit '/lobby'
+    end
+
+    expect(session1).to have_current_path('/game')
+    expect(session2).to have_current_path('/game')
+    expect(session3).to have_current_path('/game')
+  end
+
   context 'before game is started' do
     it 'is possible to join a lobby', :js do
       visit '/'
@@ -221,3 +264,7 @@ RSpec.describe Server do
     end
   end
 end
+
+# within '.hand' do
+#   expect(find_all('.playing-card').count).to eq Game::SMALL_GAME_CARDS
+# end
