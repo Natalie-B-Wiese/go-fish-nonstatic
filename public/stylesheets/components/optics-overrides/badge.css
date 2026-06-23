@@ -1,0 +1,5 @@
+
+.badge
+{
+  border: calc(var(--op-border-width)*4) solid var(--op-color-neutral-plus-max);
+}

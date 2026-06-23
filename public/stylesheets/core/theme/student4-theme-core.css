@@ -1,0 +1,26 @@
+/* Theme styling */
+:root {
+  /* Colors */
+  /* hsla(284, 90%, 40%, 1) */
+  --op-color-primary-h: 284;
+  --op-color-primary-s: 90%;
+  --op-color-primary-l: 40%;
+
+  --op-color-alerts-warning-plus-seven: hsl(var(--op-color-primary-h), 90%, 19%);
+  --op-color-alerts-warning-on-plus-seven-alt: hsl(47, 100%, 60%);
+
+  --op-color-secondary: hsl(282, 47%, 17%);
+  --op-color-secondary-on: hsl(287, 30%, 72%);
+
+  --gf-color-on-bubble-alert: var(--op-color-alerts-warning-on-plus-seven-alt);
+
+  --op-color-border: hsl(279, 32%, 86%);
+
+  --op-radius-small: 0px;
+  --op-radius-medium: 0px;
+  --op-radius-large: 0px;
+  --op-radius-x-large: 0px;
+  --op-radius-2x-large: 0px;
+  --op-radius-circle: 0px;
+  --op-radius-pill: 0px;
+}

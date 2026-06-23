@@ -1,0 +1,13 @@
+.players
+{
+  padding-top: var(--op-space-2x-large);
+  padding-right: var(--op-space-3x-large);
+  padding-bottom: var(--op-space-4x-large);
+  padding-left: var(--op-space-3x-large);
+
+  h2
+  {
+    font-size: var(--op-font-medium);
+    font-weight: var(--op-font-weight-semi-bold);
+  }
+}

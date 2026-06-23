@@ -1,0 +1,46 @@
+.game-view
+{
+  background-color: var(--op-color-neutral-plus-max);
+  color: var(--op-color-neutral-on-plus-max);
+  height: 100vh;
+  overflow: hidden;
+  --gf-side-panel-width: calc(var(--op-size-unit) * 84); /* 336 pixels */
+  --gf-side-panel-height: calc(var(--op-size-unit) * 64); /* 256 pixels */
+
+  display: grid;
+  grid-template-rows: 1fr var(--gf-side-panel-height);
+  grid-template-columns: 1fr var(--gf-side-panel-width);
+  grid-template-areas:
+    "game-board game-feed"
+    "cards books";
+
+  .game-view__game-board
+  {
+    grid-area: game-board;
+  }
+
+  .game-view__game-feed { 
+    grid-area: game-feed;
+    border-left: var(--op-border-width) solid var(--op-color-border);
+
+    .panel__content
+    {
+      /* overrides default padding of (--op-space-medium) */
+      padding: 0px !important;
+    }
+
+    .feed-content
+    {
+      padding: var(--op-space-medium);
+    }
+  }
+
+  .game-view__hand {
+    grid-area: cards; 
+  }
+
+  .game-view__books {
+    grid-area: books;
+    border-left: var(--op-border-width) solid var(--op-color-border);
+  }
+}

@@ -1,0 +1,22 @@
+
+.playing-card
+{
+  height: 100%;
+  aspect-ratio: 63.5 / 88.9;  /* official playing card */ 
+  box-shadow: var(--op-shadow-x-small);
+
+  &.playing-card--lg
+  {
+    height: calc(var(--op-size-unit)*38); /* 152 px */
+  }
+
+  &.playing-card--sm
+  {
+    height: calc(var(--op-size-unit)*30); /* 120px */
+  }
+
+  &.playing-card--hover:hover
+  {
+    margin-top: calc(var(--op-space-medium)*-1);
+  }
+}

@@ -1,0 +1,4 @@
+.avatar {
+  /* overwrittes default styling in case theme has soft corners*/
+  --_op-avatar-border-radius: 50% !important;
+}

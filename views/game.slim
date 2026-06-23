@@ -21,14 +21,15 @@ main.game-view
 							div.accordion_marker
 								i.ph.ph-caret-right.icon.icon--small
 							span.accordion__header #{player.name}
-							div
-								| Cards:#{' '}
-								span
-									strong #{player.card_count}
-							div
-								| Books:#{' '}
-								span
-									strong TODO: book count here
+							div.text-pair.text-pair--inline
+								div
+									| Cards:#{' '}
+									span
+										strong #{player.card_count}
+								div
+									| Books:#{' '}
+									span
+										strong TODO: book count here
 
 						div.accordion__content
 							div.flex.flex-row.flex-no-wrap.justify-between

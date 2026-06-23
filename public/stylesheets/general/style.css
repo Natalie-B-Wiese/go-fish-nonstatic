@@ -1,0 +1,24 @@
+.feed-content
+{
+  overflow: auto;
+}
+
+.game-actions
+{
+  background-color: var(--op-color-primary-plus-seven);
+  border: var(--op-border-width) solid var(--op-color-primary-plus-six);
+  border-radius: var(--op-radius-x-large);
+  padding: var(--op-space-small);
+}
+
+
+body
+{
+  overflow: hidden;
+}
+
+
+.gap-none
+{
+  gap: 0px;
+}
