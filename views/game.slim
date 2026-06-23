@@ -60,8 +60,8 @@ main.game-view
 						label.form-label[for="rank"]
 							| Card Rank
 						select#rank.form-control.form-control--large
-							option
-								| TODO: show list of card ranks this player has
+							- game.player_by_name(name).cards.each do |card|
+								option #{card.rank}
 				- if game.current_player.name==name
 					button.btn.btn--primary type="submit" Request
 				- else

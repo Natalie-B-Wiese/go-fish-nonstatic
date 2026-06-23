@@ -19,6 +19,10 @@ class Game
     @is_started = false
   end
 
+  def player_by_name(player_name)
+    players[players.index { |player| player.name == player_name }]
+  end
+
   def add_player(player_name)
     player = Player.new(player_name)
     @players.push(player)

@@ -1,5 +1,6 @@
 require_relative '../server'
 require_relative '../lib/go_fish/game'
+require_relative '../lib/card'
 
 RSpec.describe Server do
   def create_players_from_sessions(sessions)
@@ -171,6 +172,26 @@ RSpec.describe Server do
 
       dropdown_options3 = session3.find_field('Player').all('option').map(&:text)
       expect(dropdown_options3).to eq ['Player 1', 'Player 2']
+    end
+
+    it 'has correct rank dropdown options' do
+      game = Server.game
+      game.players[0].cards = [Card.new('A', 'Spades'), Card.new('5', 'Hearts')]
+      game.players[1].cards = [Card.new('3', 'Spades'), Card.new('6', 'Hearts'), Card.new('8', 'Spades')]
+      session1.visit '/'
+      session2.visit '/'
+
+      dropdown_options1 = session1.find_field('Rank').all('option').map(&:text)
+      expect(dropdown_options1).to eq %w[A 5]
+
+      dropdown_options2 = session2.find_field('Rank').all('option').map(&:text)
+      expect(dropdown_options2).to eq %w[3 6 8]
+    end
+
+    it 'sorts the ranks' do
+    end
+
+    it 'does not duplicate ranks in dropdown' do
     end
 
     it 'shows how many cards each player has' do
