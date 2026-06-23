@@ -62,5 +62,7 @@ main.game-view
 						select#rank.form-control.form-control--large
 							option
 								| TODO: show list of card ranks this player has
-				button.btn.btn--primary
-					| TODO: show text like 'Ask Bily for Twos'
+				- if game.current_player.name==name
+					button.btn.btn--primary type="submit" Request
+				- else
+					button.btn.btn--primary type="submit" disabled="disabled" Request

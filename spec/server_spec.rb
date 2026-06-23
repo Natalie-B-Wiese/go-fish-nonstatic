@@ -178,5 +178,11 @@ RSpec.describe Server do
       expect(session2).to have_content("Cards: #{Game::SMALL_GAME_CARDS}")
       expect(session3).to have_content("Cards: #{Game::SMALL_GAME_CARDS}")
     end
+
+    it 'enables request button only for current player' do
+      expect(session1).to have_button('Request', disabled: false)
+      expect(session2).to have_button('Request', disabled: true)
+      expect(session3).to have_button('Request', disabled: true)
+    end
   end
 end
