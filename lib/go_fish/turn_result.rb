@@ -4,6 +4,7 @@ class TurnResult
   GO_AGAIN = 'can go again'
   BOOK = 'made a book with four'
   DISQUALIFIED = 'out of the game'
+  REQUEST = 'requested a'
 
   attr_reader :current_player, :opponent_player, :rank_requested, :cards_received_opponent
 
@@ -17,6 +18,12 @@ class TurnResult
     @cards_received_opponent = cards_received_opponent
     @card_received_deck = card_received_deck
     @was_book_made = was_book_made
+  end
+
+  def request_message
+    return '' if opponent_player.nil? || rank_requested.nil?
+
+    "#{current_player.name} #{REQUEST} #{rank_requested} from #{opponent_player.name}."
   end
 
   def to_s
@@ -45,10 +52,6 @@ class TurnResult
 
   def player_out_of_cards?
     opponent_player.nil?
-  end
-
-  def request_message
-    "#{current_player.name} requested a #{rank_requested} from #{opponent_player.name}."
   end
 
   def give_message
