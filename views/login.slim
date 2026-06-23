@@ -1,8 +1,9 @@
-h1 Hello Goobus!
+div.container.container--xs
+  h1 Login
 
-form action="/join" method="POST"
-  div.form-group
-    label for="name" Name:
-    input#name type="text" name="name" placeholder="Enter your name"
+  form action="/join" method="POST"
+    div.form-group
+      label.form-label for="name" Name:
+      input#name.form-control.form-control--large type="text" name="name" placeholder="Enter your name"
 
-  button type="submit" Join
+    button.btn.btn--primary type="submit" Join
