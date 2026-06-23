@@ -207,6 +207,12 @@ RSpec.describe Server do
       expect(session3).to have_content("Player 1's Turn")
     end
 
+    it 'does not have any feed bubbles in the feed' do
+      session1.within '.feed-content' do
+        expect(session1.find_all('.feed-bubble').count).to eq 0
+      end
+    end
+
     it 'has correct player dropdown options' do
       dropdown_options1 = session1.find_field('Player').all('option').map(&:text)
       expect(dropdown_options1).to eq ['Player 2', 'Player 3']
@@ -290,7 +296,11 @@ RSpec.describe Server do
       end
     end
 
-    xit 'posts a message in the feed' do
+    it 'posts a message in the feed' do
+      sleep(5)
+      session1.within '.feed-content' do
+        expect(session1.find_all('.feed-bubble').count).to_not eq 0
+      end
     end
   end
 end

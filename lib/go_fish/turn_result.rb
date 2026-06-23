@@ -19,12 +19,8 @@ class TurnResult
     @was_book_made = was_book_made
   end
 
-  def message(player)
-    if player_out_of_cards?
-      out_of_cards_message(player)
-    else
-
-    end
+  def to_s
+    "current_player: #{current_player.name}, opponent: #{opponent_player.name}, rank_requested #{rank_requested}, cards_received_opponent.length #{cards_received_opponent.length} card_received_deck: #{card_received_deck}, was_book_made #{was_book_made}"
   end
 
   def go_again?
@@ -43,41 +39,38 @@ class TurnResult
 
   private
 
-  def out_of_cards_message(player)
-    out_of_game_message(player)
+  def out_of_cards_message
+    out_of_game_message
   end
 
   def player_out_of_cards?
     opponent_player.nil?
   end
 
-  def request_message(player)
-    "#{player_to_s(player)} requested a #{rank_requested} from #{opponent_to_s(player, false)}."
+  def request_message
+    "#{current_player.name} requested a #{rank_requested} from #{opponent_player.name}."
   end
 
-  def give_message(player)
+  def give_message
     card_word = 'card'
     card_word += 's' unless cards_received_opponent.length == 1
-    "#{opponent_to_s(player)} gave #{cards_received_opponent.length} #{card_word} to #{player_to_s(player, false)}."
+    "#{opponent_player.name} gave #{cards_received_opponent.length} #{card_word} to #{current_player.name}."
   end
 
-  def draw_deck_message(player)
+  def draw_deck_message
     if card_received_deck.nil?
       "#{current_player.name} tried to fish, but #{EMPTY_DECK}."
-    elsif player == current_player
-      "You drew a #{card_received_deck} from the deck."
     else
       "#{current_player.name} drew a card from the deck."
     end
   end
 
-  def book_message(player)
-    "#{player_to_s(player)} #{BOOK} #{rank_received}s!"
+  def book_message
+    "#{current_player.name} #{BOOK} #{rank_received}s!"
   end
 
-  def out_of_game_message(player)
-    "#{player_to_s(player)} #{NO_CARDS} and #{EMPTY_DECK}. " +
-      "#{player_to_s(player)} #{is_are(current_player, player)} #{DISQUALIFIED}."
+  def out_of_game_message
+    "#{current_player.name} #{NO_CARDS} and #{EMPTY_DECK}. #{current_player.name} is #{DISQUALIFIED}."
   end
 
   def book_made?
@@ -86,23 +79,5 @@ class TurnResult
 
   def went_fish?
     cards_received_opponent.empty?
-  end
-
-  def opponent_to_s(you_player, is_subject = true)
-    player_variable_to_s(opponent_player, you_player, is_subject)
-  end
-
-  def player_to_s(you_player, is_subject = true)
-    player_variable_to_s(current_player, you_player, is_subject)
-  end
-
-  def is_are(variable_player, you_player)
-    you_player == variable_player ? 'are' : 'is'
-  end
-
-  def player_variable_to_s(variable_player, you_player, is_subject)
-    you = 'You'
-    you = you.downcase unless is_subject
-    variable_player == you_player ? you : variable_player.name
   end
 end

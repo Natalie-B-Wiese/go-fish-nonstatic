@@ -8,7 +8,7 @@ class Game
   BIG_GAME_CARDS = 5
   BOOKS_TO_WIN = (Card::SUITS.length * Card::RANKS.length) / Book::SIZE
 
-  attr_reader :players, :deck, :inputs
+  attr_reader :players, :deck, :inputs, :feed
 
   attr_accessor :current_player_index, :go_again, :is_started
 
@@ -17,6 +17,7 @@ class Game
     @deck = Deck.new
     @current_player_index = 0
     @is_started = false
+    @feed = []
   end
 
   def player_by_name(player_name)
@@ -76,6 +77,8 @@ class Game
     end
 
     switch_turn unless turn_result.go_again?
+
+    feed.push(turn_result)
 
     turn_result
   end

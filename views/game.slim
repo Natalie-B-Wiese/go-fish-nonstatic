@@ -48,7 +48,9 @@ main.game-view
 
 		.panel__content.op-stack.flex-grow-1.gap-none
 			.feed-content.op-stack.gap-xs.flex-grow-1
-				| TODO: insert feed bubbles here
+				- game.feed.each do |turn_action|
+					div.feed-bubble.feed-bubble--action
+						div.feed-bubble__content #{turn_action}
 
 			form.game-actions.op-stack.items-stretch.gap-sm action="/request-card" method="POST"
 				.game-actions__options.op-split.items-stretch.gap-sm
