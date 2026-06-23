@@ -97,7 +97,7 @@ RSpec.describe Server do
       expect(session3).to have_content('Player 3')
     end
 
-    xit 'shows whose turn it is' do
+    it 'shows whose turn it is' do
       expect(session1).to have_content('Your Turn')
       expect(session2).to have_content("Player 1's Turn")
       expect(session3).to have_content("Player 1's Turn")

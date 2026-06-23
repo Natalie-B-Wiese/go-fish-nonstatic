@@ -32,3 +32,32 @@ main.game-view
 									TODO: list of playing card backs with class "playing-card playing-card--sm"
 								div.flex.cards-stacked
 									TODO: list of books with class "playing-card playing-card--sm"
+
+	.game-view__game-feed.panel.panel--padded.panel--primary
+		header.panel__header.op-split
+			h2 Game Feed
+			- if game.current_player.name==name
+				.badge.badge--primary Your Turn
+			- else
+				.badge.badge--primary #{game.current_player.name}'s Turn
+
+		.panel__content.op-stack.flex-grow-1.gap-none
+			.feed-content.op-stack.gap-xs.flex-grow-1
+				| TODO: insert feed bubbles here
+
+			.game-actions.op-stack.items-stretch.gap-sm
+				.game-actions__options.op-split.items-stretch.gap-sm
+					.form-group.flex-grow-1
+						label.form-label[for="player"]
+							| Player
+						select#player.form-control.form-control--large
+							option
+								| TODO: show list of players excluding self
+					.form-group.flex-grow-1
+						label.form-label[for="rank"]
+							| Card Rank
+						select#rank.form-control.form-control--large
+							option
+								| TODO: show list of card ranks this player has
+				button.btn.btn--primary
+					| TODO: show text like 'Ask Bily for Twos'
