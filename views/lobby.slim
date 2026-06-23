@@ -5,4 +5,7 @@ meta name="api_key" content=api_key
 	p #{player.name}
 
 form action="/start" method="POST"
-  button type="submit" Start
+  - if game.players.length<=1
+    button type="submit" disabled="disabled" Start
+  - else
+    button type="submit" Start

@@ -73,7 +73,14 @@ RSpec.describe Server do
     end
 
     context 'when one player is in the lobby' do
-      it 'does not allow player to start the game' do
+      let!(:session1) { Capybara::Session.new(:rack_test, Server.new) }
+
+      before do
+        create_players_from_sessions([session1])
+      end
+
+      it 'does not allow player to start the game', :js do
+        expect(session1).to have_button('Start', disabled: true)
       end
     end
 
@@ -103,7 +110,10 @@ RSpec.describe Server do
         expect(session3).to have_content('Player 3')
       end
 
-      it 'allows any player to start the game' do
+      it 'allows any player to press the start button' do
+        expect(session1).to have_button('Start', disabled: false)
+        expect(session2).to have_button('Start', disabled: false)
+        expect(session3).to have_button('Start', disabled: false)
       end
     end
   end
@@ -118,6 +128,11 @@ RSpec.describe Server do
       create_players_from_sessions(sessions)
 
       # refresh the sessions
+      sessions.each do |session|
+        session.visit '/'
+      end
+
+      session1.click_on 'Start'
       sessions.each do |session|
         session.visit '/'
       end
