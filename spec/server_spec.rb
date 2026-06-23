@@ -176,13 +176,13 @@ RSpec.describe Server do
 
     it 'has correct rank dropdown options' do
       game = Server.game
-      game.players[0].cards = [Card.new('A', 'Spades'), Card.new('5', 'Hearts')]
+      game.players[0].cards = [Card.new('2', 'Spades'), Card.new('5', 'Hearts')]
       game.players[1].cards = [Card.new('3', 'Spades'), Card.new('6', 'Hearts'), Card.new('8', 'Spades')]
       session1.visit '/'
       session2.visit '/'
 
       dropdown_options1 = session1.find_field('Rank').all('option').map(&:text)
-      expect(dropdown_options1).to eq %w[A 5]
+      expect(dropdown_options1).to eq %w[2 5]
 
       dropdown_options2 = session2.find_field('Rank').all('option').map(&:text)
       expect(dropdown_options2).to eq %w[3 6 8]
@@ -199,6 +199,13 @@ RSpec.describe Server do
     end
 
     it 'does not duplicate ranks in dropdown' do
+      game = Server.game
+      game.players[0].cards = [Card.new('5', 'Hearts'), Card.new('2', 'Spades'),
+                               Card.new('5', 'Clubs'), Card.new('5', 'Spades')]
+      session1.visit '/'
+
+      dropdown_options1 = session1.find_field('Rank').all('option').map(&:text)
+      expect(dropdown_options1).to eq %w[2 5]
     end
 
     it 'shows how many cards each player has' do

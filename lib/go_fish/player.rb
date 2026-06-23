@@ -15,6 +15,10 @@ class Player
     @cards.sort_by { |card| card.value }
   end
 
+  def card_ranks
+    cards.map(&:rank).uniq
+  end
+
   def add_card(card)
     @cards.push(card)
   end
