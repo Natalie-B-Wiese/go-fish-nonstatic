@@ -1,0 +1,24 @@
+{
+  "id": "file:/round_result.json#",
+  "type": "object",
+  "required": [
+    "current_player",
+    "rank",
+    "went_fishing",
+    "display"
+  ],
+  "properties": {
+    "current_player": {
+      "type": "string"
+    },
+    "rank": {
+      "type": "string"
+    },
+    "went_fishing": {
+      "type": "boolean"
+    },
+    "display": {
+      "type": "string"
+    }
+  }
+}

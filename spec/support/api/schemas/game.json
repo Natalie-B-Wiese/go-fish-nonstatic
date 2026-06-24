@@ -1,0 +1,39 @@
+{
+  "id": "file:/game.json#",
+  "type": "object",
+  "required": [
+    "turn_index",
+    "players",
+    "hand",
+    "round_results"
+  ],
+  "properties": {
+    "turn_index": {
+      "type": "integer"
+    },
+    "players": {
+      "type": "array",
+      "items": {
+        "$ref": "file:/player.json#"
+      }
+    },
+    "hand": {
+      "type": "array",
+      "items": {
+        "$ref": "file:/card.json#"
+      }
+    },
+    "round_results": {
+      "type": "array",
+      "items": {
+        "$ref": "file:/round_result.json#"
+      }
+    },
+    "winners": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
