@@ -499,5 +499,13 @@ RSpec.describe Server do
       expect(session2).to have_current_path('/game-over')
       expect(session3).to have_current_path('/game-over')
     end
+
+    it 'shows the winner' do
+      refresh_sessions(sessions, '/')
+      session1.save_and_open_page
+      expect(session1).to have_content("#{game.players[2].name}")
+      expect(session2).to have_current_path("#{game.players[2].name}")
+      expect(session3).to have_current_path("#{game.players[2].name}")
+    end
   end
 end
