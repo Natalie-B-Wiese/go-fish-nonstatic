@@ -65,6 +65,7 @@ class Server < Sinatra::Base
 
   post '/request-card' do
     return redirect '/' unless authenticated?(session)
+    return redirect if self.class.api_keys[session[:api_key]] != self.class.game.current_player.name
 
     opponent_name = params[:opponent_name]
     request_rank = params[:rank]
