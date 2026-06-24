@@ -63,10 +63,10 @@ class Server < Sinatra::Base
         #     "type": "string"
         #   }
         # }
-        { 'turn_index' => 'game.current_player_index',
-          'players' => 'game.players.map(&:as_json)',
-          'hand' => 'current_player.cards.map(&:as_json)',
-          'round_results' => 'game.feed.as_json' }.to_json
+        { 'turn_index' => game.current_player_index,
+          'players' => game.players.map(&:data),
+          'hand' => current_player.cards.map(&:data),
+          'round_results' => game.feed.map(&:data) }.to_json
       end
     end
 

@@ -55,10 +55,10 @@ class Card
     "#{rank_to_s.downcase}_of_#{suit.downcase}.png"
   end
 
-  def as_json
+  def data
     {
       'rank' => rank,
       'suit' => suit
-    }.to_json
+    }
   end
 end

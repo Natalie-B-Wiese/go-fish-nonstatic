@@ -92,12 +92,12 @@ class Player
   #     "type": "integer"
   #   }
 
-  def as_json
+  def data
     {
       'name' => name,
       'books' => books.map(&:rank),
       'book_count' => book_count
-    }.to_json
+    }
   end
 
   private

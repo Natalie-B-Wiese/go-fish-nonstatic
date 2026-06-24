@@ -45,31 +45,26 @@ describe Server, type: :request do
     end
 
     context 'when authenticated' do
-      it 'allows authorized bots' do
+      before do
         post '/join', { 'name' => 'Bot' }.to_json,
              { 'HTTP_ACCEPT' => 'application/json', 'CONTENT_TYPE' => 'application/json' }
+
+        Server.game.start
 
         api_key = JSON.parse(last_response.body)['api_key']
         encoded = Base64.encode64("#{api_key}:X").strip
 
         get '/game', {},
             { 'HTTP_ACCEPT' => 'application/json', 'CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => "Basic #{encoded}" }
+      end
+
+      it 'allows authorized bots' do
         expect(last_response).to be_ok
       end
-    end
-  end
 
-  xdescribe 'GET /game' do
-    before do
-      post '/join', { 'name' => 'Bot' }.to_json,
-           { 'HTTP_ACCEPT' => 'application/json', 'CONTENT_TYPE' => 'application/json' }
-
-      Server.game.start
-    end
-    it 'returns a response matching the game schema' do
-      get '/game', { 'HTTP_ACCEPT' => 'application/json', 'CONTENT_TYPE' => 'application/json' }
-      expect(last_response).to be_ok
-      expect(last_response).to match_json_schema('game')
+      it 'returns a response matching the game schema' do
+        expect(last_response).to match_json_schema('game')
+      end
     end
   end
 end

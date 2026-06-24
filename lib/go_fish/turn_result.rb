@@ -98,13 +98,13 @@ class TurnResult
   #     }
   #   }
   # }
-  def as_json
+  def data
     {
       'current_player' => current_player.name,
       'rank' => rank_requested,
       'went_fishing' => went_fish?,
       'display' => request_message + action_message + result_message
-    }.to_json
+    }
   end
 
   private
