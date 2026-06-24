@@ -39,7 +39,11 @@ class TurnResult
 
   def result_message
     result = ''
-    result += "#{current_player.name} #{TAKE_DECK} card from the deck. " unless card_received_deck.nil?
+    if card_received_deck
+      card_str = rank_received == rank_requested ? rank_requested : 'card'
+      result += "#{current_player.name} #{TAKE_DECK} #{card_str} from the deck. "
+    end
+
     result += "#{current_player.name} #{GO_AGAIN}. " if go_again?
     result += "#{current_player.name} #{BOOK} #{rank_received}s!" if book_made?
 

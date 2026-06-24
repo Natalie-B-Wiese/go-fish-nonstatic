@@ -53,7 +53,7 @@ describe TurnResult do
       end
     end
 
-    context 'when player made a request and receives one card from opponent' do
+    context 'when player made a request and receives multiple cards from opponent' do
       let(:turn_result) do
         TurnResult.new(current_player: current_player, opponent_player: opponent_player,
                        rank_requested: rank_requested, cards_received_opponent: [Card.new(rank_requested, 'Spades'), Card.new(rank_requested, 'Hearts')])
@@ -137,6 +137,16 @@ describe TurnResult do
           expect(result).to match(/#{current_player_name}.*#{TurnResult::GO_AGAIN}/)
         end
 
+        it 'returns a draw from deck message' do
+          result = turn_result.result_message
+          expect(result).to match(/#{TurnResult::TAKE_DECK}/)
+        end
+
+        it 'shows the rank drawn from the deck' do
+          result = turn_result.result_message
+          expect(result).to match(/#{rank_requested}/)
+        end
+
         it 'does not return book message' do
           result = turn_result.result_message
           expect(result).not_to match(/#{TurnResult::BOOK}/)
@@ -152,6 +162,16 @@ describe TurnResult do
         it 'returns go again message' do
           result = turn_result.result_message
           expect(result).to match(/#{current_player_name}.*#{TurnResult::GO_AGAIN}/)
+        end
+
+        it 'returns a draw from deck message' do
+          result = turn_result.result_message
+          expect(result).to match(/#{TurnResult::TAKE_DECK}/)
+        end
+
+        it 'shows the rank drawn from the deck' do
+          result = turn_result.result_message
+          expect(result).to match(/#{rank_requested}/)
         end
 
         it 'returns book message' do
@@ -171,6 +191,12 @@ describe TurnResult do
         it 'returns card draw from deck message' do
           result = turn_result.result_message
           expect(result).to match(/#{TurnResult::TAKE_DECK}/)
+        end
+
+        it 'does not show the rank drawn from the deck' do
+          result = turn_result.result_message
+          expect(result).to_not match(/#{other_rank}/)
+          expect(result).to_not match(/#{rank_requested}/)
         end
 
         it 'does not return go again message' do
@@ -193,6 +219,11 @@ describe TurnResult do
         it 'does not return go again message' do
           result = turn_result.result_message
           expect(result).to_not match(/#{current_player_name}.*#{TurnResult::GO_AGAIN}/)
+        end
+
+        it 'shows the card rank' do
+          result = turn_result.result_message
+          expect(result).to match(/#{other_rank}/)
         end
 
         it 'returns book message' do
