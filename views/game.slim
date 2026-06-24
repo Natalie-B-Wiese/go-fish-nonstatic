@@ -35,7 +35,8 @@ main.game-view
 									- player.cards.each do |card|
 										img.playing-card.playing-card--sm src="/images/cards/playing-card-back.jpg"
 								div.flex.cards-stacked
-									TODO: list of books with class "playing-card playing-card--sm"
+									- player.books.each do |book|
+										img.playing-card.playing-card--sm src="/images/cards/#{book.to_image_name}"
 
 	.game-view__game-feed.panel.panel--padded.panel--primary
 		header.panel__header.op-split
@@ -78,9 +79,17 @@ main.game-view
 					button.btn.btn--primary type="submit" disabled="disabled" Request
 
 	div.game-view__hand.panel.panel--secondary
-		header.panel_header
+		header.panel__header
 			h2 Hand
 		div.panel__content
 			div.cards-stacked.flex.margin-top-md
 				- my_player.cards.each do |card|
 					img.playing-card.playing-card--lg.playing-card--hover src="/images/cards/#{card.to_image_name}"
+
+	div.game-view__books.panel.panel--secondary
+		header.panel__header
+			h2 Books
+		div.panel__content
+			div.cards-stacked.flex
+				- my_player.books.each do |book|
+					img.playing-card.playing-card--sm src="/images/cards/#{book.to_image_name}"

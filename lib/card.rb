@@ -32,7 +32,7 @@ class Card
     "#{rank} of #{suit}"
   end
 
-  def rank_to_s
+  def self.rank_to_s(rank)
     case rank
     when 'A'
       'Ace'
@@ -45,6 +45,10 @@ class Card
     else
       rank
     end
+  end
+
+  def rank_to_s
+    Card.rank_to_s(rank)
   end
 
   def to_image_name
