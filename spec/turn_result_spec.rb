@@ -5,16 +5,16 @@ require_relative '../lib/card'
 # initialize(current_player:, opponent_player: nil, rank_requested: nil,
 #                  cards_received_opponent: [], card_received_deck: nil, was_book_made: false)
 describe TurnResult do
+  let(:current_player_name) { 'Jeff' }
+  let(:current_player) { Player.new(current_player_name) }
+
+  let(:opponent_name) { 'Bob' }
+  let(:opponent_player) { Player.new(opponent_name) }
+
+  let(:card_received) { Card.new('5', 'Spades') }
+  let(:rank_requested) { '4' }
+
   describe '#request_message' do
-    let(:current_player_name) { 'Jeff' }
-    let(:current_player) { Player.new(current_player_name) }
-
-    let(:opponent_name) { 'Bob' }
-    let(:opponent_player) { Player.new(opponent_name) }
-
-    let(:card_received) { Card.new('5', 'Spades') }
-    let(:rank_requested) { '4' }
-
     context 'when player requests card from opponent' do
       let(:turn_result) do
         TurnResult.new(current_player: current_player, opponent_player: opponent_player, rank_requested: rank_requested)
@@ -38,15 +38,53 @@ describe TurnResult do
         expect(result).to eq ''
       end
     end
+  end
 
-    # current_player:, opponent_player: nil, rank_requested: nil,
-    #             cards_received_opponent: [], card_received_deck: nil, was_book_made: false
-    xcontext 'when opponent_player is nil, rank_requested is nil, cards_received is nil' do
-      let(:turn_result) { TurnResult.new(current_player: current_player) }
-      it 'returns player out of game message' do
-        result = turn_result.feed_messages
-        expect(result).to match(/#{TurnResult::DISQUALIFIED}/i)
+  describe '#action_message' do
+    context 'when player made a request and receives one card from opponent' do
+      let(:turn_result) do
+        TurnResult.new(current_player: current_player, opponent_player: opponent_player,
+                       rank_requested: rank_requested, cards_received_opponent: [Card.new(rank_requested, 'Spades')])
       end
+
+      it 'returns receive from opponent message' do
+        result = turn_result.action_message
+        expect(result).to match(/#{opponent_name}.*1 card.*#{current_player_name}/)
+      end
+    end
+
+    context 'when player made a request and receives one card from opponent' do
+      let(:turn_result) do
+        TurnResult.new(current_player: current_player, opponent_player: opponent_player,
+                       rank_requested: rank_requested, cards_received_opponent: [Card.new(rank_requested, 'Spades'), Card.new(rank_requested, 'Hearts')])
+      end
+
+      it 'returns receive from opponent message' do
+        result = turn_result.action_message
+        expect(result).to match(/#{opponent_name}.*2 cards.*#{current_player_name}/)
+      end
+    end
+
+    context 'when player made a request and does not receive a card from opponent' do
+      let(:turn_result) do
+        TurnResult.new(current_player: current_player, opponent_player: opponent_player,
+                       rank_requested: rank_requested)
+      end
+
+      it 'returns go fish message' do
+        result = turn_result.action_message
+        expect(result).to match(/#{TurnResult::GO_FISH}.*#{opponent_name}.* #{rank_requested}/)
+      end
+    end
+  end
+
+  # current_player:, opponent_player: nil, rank_requested: nil,
+  #             cards_received_opponent: [], card_received_deck: nil, was_book_made: false
+  xcontext 'when opponent_player is nil, rank_requested is nil, cards_received is nil' do
+    let(:turn_result) { TurnResult.new(current_player: current_player) }
+    it 'returns player out of game message' do
+      result = turn_result.feed_messages
+      expect(result).to match(/#{TurnResult::DISQUALIFIED}/i)
     end
   end
 end

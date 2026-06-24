@@ -5,6 +5,7 @@ class TurnResult
   BOOK = 'made a book with four'
   DISQUALIFIED = 'out of the game'
   REQUEST = 'requested a'
+  GO_FISH = 'Go Fish'
 
   attr_reader :current_player, :opponent_player, :rank_requested, :cards_received_opponent
 
@@ -24,6 +25,15 @@ class TurnResult
     return '' if opponent_player.nil? || rank_requested.nil?
 
     "#{current_player.name} #{REQUEST} #{rank_requested} from #{opponent_player.name}."
+  end
+
+  def action_message
+    if cards_received_opponent.nil? || cards_received_opponent.empty?
+      "#{GO_FISH}: #{opponent_player.name} doesn't have any #{rank_requested}s"
+    else
+      card_word = cards_received_opponent.length == 1 ? 'card' : 'cards'
+      "#{opponent_player.name} gave #{cards_received_opponent.length} #{card_word} to #{current_player.name}."
+    end
   end
 
   def to_s
@@ -52,12 +62,6 @@ class TurnResult
 
   def player_out_of_cards?
     opponent_player.nil?
-  end
-
-  def give_message
-    card_word = 'card'
-    card_word += 's' unless cards_received_opponent.length == 1
-    "#{opponent_player.name} gave #{cards_received_opponent.length} #{card_word} to #{current_player.name}."
   end
 
   def draw_deck_message
