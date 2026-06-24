@@ -45,16 +45,20 @@ class Server < Sinatra::Base
   end
 
   get '/game' do
-    # if authenticated?(session) && self.class.game.started? && !self.class.game.game_over?
     respond_to do |f|
       f.html do
-        slim :game, locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key],
-                              game: self.class.game }
+        if authenticated?(session) && self.class.game.started? && !self.class.game.game_over?
+          slim :game, locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key],
+                                game: self.class.game }
+        else
+          redirect '/'
+        end
       end
 
       f.json do
         authenticate!
         game = self.class.game
+        # TODO: perhaps handle case where game isn't started
 
         # optional parameter:
         # "winners": {
@@ -69,10 +73,6 @@ class Server < Sinatra::Base
           'round_results' => game.feed.map(&:data) }.to_json
       end
     end
-
-    # else
-    # redirect '/'
-    # end
   end
 
   get '/game-over' do
