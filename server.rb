@@ -19,7 +19,11 @@ class Server < Sinatra::Base
   get '/' do
     if authenticated?(session)
       if self.class.game.started?
-        redirect '/game'
+        if self.class.game.game_over?
+          redirect '/game-over'
+        else
+          redirect '/game'
+        end
       else
         redirect '/lobby'
       end
@@ -29,8 +33,17 @@ class Server < Sinatra::Base
   end
 
   get '/game' do
-    if authenticated?(session) && self.class.game.started?
+    if authenticated?(session) && self.class.game.started? && !self.class.game.game_over?
       slim :game,
+           locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key], game: self.class.game }
+    else
+      redirect '/'
+    end
+  end
+
+  get '/game-over' do
+    if authenticated?(session) && self.class.game.started? && self.class.game.game_over?
+      slim :game_over,
            locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key], game: self.class.game }
     else
       redirect '/'

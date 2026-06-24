@@ -1,6 +1,7 @@
 require_relative '../server'
 require_relative '../lib/go_fish/game'
 require_relative '../lib/card'
+require_relative '../lib/go_fish/book'
 
 RSpec.describe Server do
   let(:game) { Server.game }
@@ -25,6 +26,12 @@ RSpec.describe Server do
     parent.find_all(element_selector)
     session.within parent do
       return session.find_all(element_selector, visible: :all)
+    end
+  end
+
+  def add_random_books_to_player(player, num_books = 1)
+    num_books.times do
+      player.books += [Book.new('4')]
     end
   end
 
@@ -437,6 +444,60 @@ RSpec.describe Server do
       it 'switches to next player' do
         expect(session2).to have_button('Request', disabled: false)
       end
+    end
+  end
+
+  context 'when game is over' do
+    let!(:session1) { Capybara::Session.new(:rack_test, Server.new) }
+    let!(:session2) { Capybara::Session.new(:rack_test, Server.new) }
+    let!(:session3) { Capybara::Session.new(:rack_test, Server.new) }
+    let(:sessions) { [session1, session2, session3] }
+
+    before do
+      create_players_from_sessions(sessions)
+
+      refresh_sessions(sessions)
+
+      session1.click_on 'Start'
+      refresh_sessions(sessions)
+
+      books_player1 = 5
+      books_player2 = 2
+      books_player3 = Game::BOOKS_TO_WIN - (books_player1 + books_player2)
+
+      game.players[0].cards = []
+      add_random_books_to_player(game.players[0], books_player1)
+
+      game.players[1].cards = []
+      add_random_books_to_player(game.players[1], books_player2)
+
+      game.players[2].cards = []
+      add_random_books_to_player(game.players[2], books_player3)
+    end
+
+    it 'game over is true' do
+      expect(game.game_over?).to be true
+    end
+
+    it 'reroutes from home to game over' do
+      refresh_sessions(sessions, '/')
+      expect(session1).to have_current_path('/game-over')
+      expect(session2).to have_current_path('/game-over')
+      expect(session3).to have_current_path('/game-over')
+    end
+
+    it 'reroutes from game to game over' do
+      refresh_sessions(sessions, '/game')
+      expect(session1).to have_current_path('/game-over')
+      expect(session2).to have_current_path('/game-over')
+      expect(session3).to have_current_path('/game-over')
+    end
+
+    it 'reroutes from lobby to game over' do
+      refresh_sessions(sessions, '/lobby')
+      expect(session1).to have_current_path('/game-over')
+      expect(session2).to have_current_path('/game-over')
+      expect(session3).to have_current_path('/game-over')
     end
   end
 end
