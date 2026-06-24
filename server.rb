@@ -14,6 +14,7 @@ class Server < Sinatra::Base
 
   def self.reset!
     @@game = nil
+    @@api_keys = nil
   end
 
   get '/' do
@@ -30,6 +31,11 @@ class Server < Sinatra::Base
     else
       slim :login
     end
+  end
+
+  post '/reset' do
+    self.class.reset!
+    redirect '/'
   end
 
   get '/game' do

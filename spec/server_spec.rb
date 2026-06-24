@@ -501,11 +501,38 @@ RSpec.describe Server do
     end
 
     it 'shows the winner' do
-      refresh_sessions(sessions, '/')
-      session1.save_and_open_page
+      refresh_sessions(sessions)
       expect(session1).to have_content("#{game.players[2].name}")
-      expect(session2).to have_current_path("#{game.players[2].name}")
-      expect(session3).to have_current_path("#{game.players[2].name}")
+      expect(session2).to have_content("#{game.players[2].name}")
+      expect(session3).to have_content("#{game.players[2].name}")
+    end
+
+    context 'when exit button is clicked' do
+      before do
+        refresh_sessions(sessions)
+        session1.click_on 'Exit'
+      end
+
+      it 'takes that player to login page' do
+        session1.save_and_open_page
+        expect(session1).to have_current_path('/')
+      end
+
+      it 'does not take other players to login' do
+        expect(session2).to_not have_current_path('/')
+        expect(session3).to_not have_current_path('/')
+      end
+
+      context 'when other players refresh page' do
+        before do
+          refresh_sessions(sessions)
+        end
+
+        it 'takes them to login' do
+          expect(session2).to have_current_path('/')
+          expect(session3).to have_current_path('/')
+        end
+      end
     end
   end
 end
