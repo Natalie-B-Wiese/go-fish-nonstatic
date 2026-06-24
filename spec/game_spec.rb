@@ -551,8 +551,8 @@ describe Game do
     context 'when one player has most books' do
       before do
         player1.books = []
-        player2.books = [Book.new(5), Book.new(2), Book.new(10)]
-        player3.books = [Book.new(12)]
+        player2.books = [Book.new('5'), Book.new('2'), Book.new('10')]
+        player3.books = [Book.new('A')]
       end
 
       it 'returns that player' do
@@ -564,9 +564,9 @@ describe Game do
 
     context 'when there is a tie' do
       before do
-        player1.books = [Book.new(8), Book.new(5), Book.new(2)]
-        player2.books = [Book.new(5), Book.new(3), Book.new(4)]
-        player3.books = [Book.new(15)]
+        player1.books = [Book.new('8'), Book.new('5'), Book.new('2')]
+        player2.books = [Book.new('5'), Book.new('3'), Book.new('4')]
+        player3.books = [Book.new('A')]
       end
 
       it 'returns user with most book and highest value book' do

@@ -68,8 +68,7 @@ class Player
     return nil unless cards_in_book.length == Book::SIZE
 
     self.cards -= cards_in_book
-    value = Card.rank_to_value(rank)
-    book = Book.new(value)
+    book = Book.new(rank)
     books.push(book)
     book
   end

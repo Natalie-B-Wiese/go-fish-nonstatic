@@ -1,14 +1,13 @@
+require_relative '../card'
+
 # a representation of four cards of the same value
 class Book
-  attr_reader :value
+  attr_reader :value, :rank
 
   SIZE = 4
 
-  class InvalidValue < StandardError; end
-
-  def initialize(value)
-    raise InvalidValue unless value.is_a?(Integer)
-
-    @value = value
+  def initialize(rank)
+    @rank = rank
+    @value = Card.rank_to_value(rank)
   end
 end
