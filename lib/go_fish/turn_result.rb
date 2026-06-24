@@ -1,6 +1,6 @@
 class TurnResult
   NO_CARDS = 'ran out of cards'
-  EMPTY_DECK = 'the deck is empty'
+  EMPTY_DECK = 'The deck is empty'
   GO_AGAIN = 'can go again'
   BOOK = 'made a book with four'
   DISQUALIFIED = 'out of the game'
@@ -23,9 +23,17 @@ class TurnResult
   end
 
   def request_message
-    return '' if opponent_player.nil? || rank_requested.nil?
+    result = ''
+    if player_out_of_cards?
+      result = "#{current_player.name} #{NO_CARDS}. "
+      result += "#{current_player.name} #{TAKE_DECK} card from the deck. " unless card_received_deck.nil?
+      result += "#{EMPTY_DECK}. #{current_player.name} is #{DISQUALIFIED}. " if deck_empty?
+      result += "#{current_player.name} #{GO_AGAIN}. " if go_again?
+    else
+      result = "#{current_player.name} #{REQUEST} #{rank_requested} from #{opponent_player.name}."
+    end
 
-    "#{current_player.name} #{REQUEST} #{rank_requested} from #{opponent_player.name}."
+    result
   end
 
   def action_message
@@ -51,7 +59,7 @@ class TurnResult
   end
 
   def go_again?
-    (!rank_received.nil? || was_book_made == true) && rank_received == rank_requested
+    (!rank_received.nil? && rank_requested.nil?) || ((!rank_received.nil? || was_book_made == true) && rank_received == rank_requested)
   end
 
   def rank_received
@@ -66,24 +74,12 @@ class TurnResult
 
   private
 
-  def out_of_cards_message
-    out_of_game_message
+  def deck_empty?
+    !cards_received_opponent.empty? || card_received_deck.nil?
   end
 
   def player_out_of_cards?
     opponent_player.nil?
-  end
-
-  def draw_deck_message
-    if card_received_deck.nil?
-      "#{current_player.name} tried to fish, but #{EMPTY_DECK}."
-    else
-      "#{current_player.name} drew a card from the deck."
-    end
-  end
-
-  def out_of_game_message
-    "#{current_player.name} #{NO_CARDS} and #{EMPTY_DECK}. #{current_player.name} is #{DISQUALIFIED}."
   end
 
   def book_made?

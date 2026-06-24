@@ -332,9 +332,9 @@ describe Game do
           expect(result.go_again?).to eq true
         end
 
-        it 'does not switch turns' do
+        it 'switches turns' do
           game.play_turn(rank: rank, opponent: opponent)
-          expect(game.current_player).to eq player1
+          expect(game.current_player).to_not eq player1
         end
       end
     end

@@ -200,7 +200,7 @@ RSpec.describe Server do
       expect(session2).to have_content('Player 3')
 
       expect(session3).to have_content('Player 1')
-      expect(session3).to have_content('Player 3')
+      expect(session3).to have_content('Player 2')
     end
 
     it 'does not have an accordion for own player' do
