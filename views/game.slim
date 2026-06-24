@@ -50,7 +50,13 @@ main.game-view
 			.feed-content.op-stack.gap-xs.flex-grow-1
 				- game.feed.each do |turn_action|
 					div.feed-bubble.feed-bubble--action
-						div.feed-bubble__content #{turn_action}
+						div.feed-bubble__content #{turn_action.request_message}
+					div.feed-bubble.feed-bubble--response.feed-bubble--unsuccess
+						i.ph.ph-arrow-bend-down-right.icon.icon--medium
+						div.feed-bubble__content #{turn_action.action_message}
+					div.feed-bubble.feed-bubble--response
+						i.ph.ph-arrow-bend-down-right.icon.icon--medium
+						div.feed-bubble__content #{turn_action.result_message}
 
 			form.game-actions.op-stack.items-stretch.gap-sm action="/request-card" method="POST"
 				.game-actions__options.op-split.items-stretch.gap-sm

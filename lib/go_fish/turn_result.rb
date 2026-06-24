@@ -46,10 +46,6 @@ class TurnResult
     result
   end
 
-  def to_s
-    "current_player: #{current_player.name}, opponent: #{opponent_player.name}, rank_requested #{rank_requested}, cards_received_opponent.length #{cards_received_opponent.length} card_received_deck: #{card_received_deck}, was_book_made #{was_book_made}"
-  end
-
   def go_again?
     (!rank_received.nil? || was_book_made == true) && rank_received == rank_requested
   end
