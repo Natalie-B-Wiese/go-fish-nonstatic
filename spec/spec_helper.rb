@@ -1,7 +1,10 @@
 require 'rack/test'
+require 'rspec'
 require 'capybara'
 require 'capybara-playwright-driver'
 require 'capybara/dsl'
+require 'json_matchers/rspec'
+
 ENV['RACK_ENV'] = 'test'
 require_relative '../server'
 

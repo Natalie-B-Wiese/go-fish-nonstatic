@@ -1,9 +1,15 @@
 require 'sinatra'
 require_relative 'lib/go_fish/game'
 require_relative 'lib/go_fish/player'
+require 'sinatra/contrib/all'
+require 'rack/contrib'
 
 class Server < Sinatra::Base
+  register Sinatra::RespondWith
+  use Rack::JSONBodyParser
+
   enable :sessions
+
   def self.game
     @@game ||= Game.new
   end
@@ -56,15 +62,24 @@ class Server < Sinatra::Base
     end
   end
 
-  post '/join' do
-    # generate a key using base-64 from the name
-    api_key = Base64.urlsafe_encode64("#{params[:name]}:#{(Time.now.to_f * 1000).to_i}")
+  def add_player(name)
+    api_key = Base64.urlsafe_encode64("#{name}:#{(Time.now.to_f * 1000).to_i}")
     session[:api_key] = api_key
 
-    self.class.api_keys[api_key] = params[:name]
-    self.class.game.add_player(params[:name])
+    self.class.api_keys[api_key] = name
+    self.class.game.add_player(name)
+  end
 
-    redirect '/lobby'
+  post '/join' do
+    name = params[:name] || JSON.parse(request.body.read)['name']
+
+    add_player(name)
+
+    respond_to do |f|
+      f.html { redirect '/lobby' }
+
+      f.json { { 'api_key' => api_key }.to_json }
+    end
   end
 
   post '/start' do
@@ -113,5 +128,16 @@ class Server < Sinatra::Base
       slim :lobby,
            locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key], game: self.class.game }
     end
+  end
+
+  def current_player
+    auth = Rack::Auth::Basic::Request.new(request.env)
+
+    return nil unless auth.provided? && auth.basic?
+
+    api_key = auth.username
+    name = self.class.api_keys[api_key]
+
+    game.player_by_name(name)
   end
 end
