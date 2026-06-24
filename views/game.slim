@@ -51,32 +51,42 @@ main.game-view
 				- game.feed.each do |turn_action|
 					div.feed-bubble.feed-bubble--action
 						div.feed-bubble__content #{turn_action.request_message}
-					div.feed-bubble.feed-bubble--response.feed-bubble--unsuccess
-						i.ph.ph-arrow-bend-down-right.icon.icon--medium
-						div.feed-bubble__content #{turn_action.action_message}
-					div.feed-bubble.feed-bubble--response
-						i.ph.ph-arrow-bend-down-right.icon.icon--medium
-						div.feed-bubble__content #{turn_action.result_message}
+					- unless turn_action.action_message.empty?
+						div.feed-bubble.feed-bubble--response.feed-bubble--unsuccess
+							i.ph.ph-arrow-bend-down-right.icon.icon--medium
+							div.feed-bubble__content #{turn_action.action_message}
+					- unless turn_action.result_message.empty?
+						div.feed-bubble.feed-bubble--response
+							i.ph.ph-arrow-bend-down-right.icon.icon--medium
+							div.feed-bubble__content #{turn_action.result_message}
 
-			form.game-actions.op-stack.items-stretch.gap-sm action="/request-card" method="POST"
-				.game-actions__options.op-split.items-stretch.gap-sm
-					.form-group.flex-grow-1
-						label.form-label[for="opponent_name"]
-							| Player
-						select#opponent_name.form-control.form-control--large name="opponent_name"
-							- game.players.each do |player|
-								- next if player.name==name
-								option=player.name
-					.form-group.flex-grow-1
-						label.form-label[for="rank"]
-							| Card Rank
-						select#rank.form-control.form-control--large name="rank"
-							- my_player.card_ranks.each do |card_rank|
-								option #{card_rank}
-				- if game.current_player.name==name
-					button.btn.btn--primary type="submit" Request
-				- else
-					button.btn.btn--primary type="submit" disabled="disabled" Request
+			- if my_player.out_of_cards?
+				form.game-actions.op-stack.items-stretch.gap-sm action="/take-deck-card" method="POST"
+					.game-actions__options.op-split.items-stretch.gap-sm
+					- if game.current_player.name==name
+						button.btn.btn--primary type="submit" Draw from Deck
+					- else
+						button.btn.btn--primary type="submit" disabled="disabled" Draw from Deck
+			- else
+				form.game-actions.op-stack.items-stretch.gap-sm action="/request-card" method="POST"
+					.game-actions__options.op-split.items-stretch.gap-sm
+						.form-group.flex-grow-1
+							label.form-label[for="opponent_name"]
+								| Player
+							select#opponent_name.form-control.form-control--large name="opponent_name"
+								- game.players.each do |player|
+									- next if player.name==name
+									option=player.name
+						.form-group.flex-grow-1
+							label.form-label[for="rank"]
+								| Card Rank
+							select#rank.form-control.form-control--large name="rank"
+								- my_player.card_ranks.each do |card_rank|
+									option #{card_rank}
+					- if game.current_player.name==name
+						button.btn.btn--primary type="submit" Request
+					- else
+						button.btn.btn--primary type="submit" disabled="disabled" Request
 
 	div.game-view__hand.panel.panel--secondary
 		header.panel__header

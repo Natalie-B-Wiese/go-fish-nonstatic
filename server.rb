@@ -75,6 +75,18 @@ class Server < Sinatra::Base
     redirect '/game'
   end
 
+  post '/take-deck-card' do
+    return redirect '/' unless authenticated?(session)
+    return redirect if self.class.api_keys[session[:api_key]] != self.class.game.current_player.name
+    return redirect unless self.class.game.current_player.out_of_cards?
+
+    turn_result = self.class.game.request_deck_card
+    self.class.game.add_turn_result_to_feed(turn_result)
+    self.class.game.switch_turn unless turn_result.go_again?
+
+    redirect '/game'
+  end
+
   get '/lobby' do
     if self.class.game.started? || !authenticated?(session)
       redirect '/'

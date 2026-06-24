@@ -327,9 +327,115 @@ RSpec.describe Server do
       end
     end
 
-    it 'posts a message in the feed' do
+    it 'posts 3 messages in the feed' do
       session1.within '.feed-content' do
-        expect(session1.find_all('.feed-bubble').count).to_not eq 0
+        expect(session1.find_all('.feed-bubble').count).to eq 3
+      end
+    end
+  end
+
+  context 'when current player has cards' do
+    let!(:session1) { Capybara::Session.new(:rack_test, Server.new) }
+    let!(:session2) { Capybara::Session.new(:rack_test, Server.new) }
+    let!(:session3) { Capybara::Session.new(:rack_test, Server.new) }
+    let(:sessions) { [session1, session2, session3] }
+
+    before do
+      create_players_from_sessions(sessions)
+
+      refresh_sessions(sessions)
+
+      session1.click_on 'Start'
+      refresh_sessions(sessions)
+    end
+
+    it 'has dropdown for player' do
+      expect(session1).to have_select('Player')
+    end
+
+    it 'has dropdown for rank' do
+      expect(session1).to have_select('Rank')
+    end
+
+    it 'has request button' do
+      expect(session1).to have_button('Request')
+    end
+
+    it 'does not have draw from deck button' do
+      expect(session1).to_not have_button('Draw from Deck')
+    end
+  end
+
+  context 'when current player is out of cards' do
+    let!(:session1) { Capybara::Session.new(:rack_test, Server.new) }
+    let!(:session2) { Capybara::Session.new(:rack_test, Server.new) }
+    let!(:session3) { Capybara::Session.new(:rack_test, Server.new) }
+    let(:sessions) { [session1, session2, session3] }
+
+    before do
+      create_players_from_sessions(sessions)
+
+      refresh_sessions(sessions)
+
+      session1.click_on 'Start'
+      refresh_sessions(sessions)
+
+      game.players[0].cards = []
+      refresh_sessions(sessions)
+    end
+
+    it 'does not have dropdown for player' do
+      expect(session1).to_not have_select('Player')
+    end
+
+    it 'does not have dropdown for rank' do
+      expect(session1).to_not have_select('Rank')
+    end
+
+    it 'does not have request button' do
+      expect(session1).to_not have_button('Request')
+    end
+
+    it 'has draw from deck button' do
+      expect(session1).to have_button('Draw from Deck')
+    end
+
+    context 'when current player requests card from deck and deck has cards' do
+      before do
+        session1.click_on 'Draw from Deck'
+      end
+
+      it 'posts 2 messages in the feed' do
+        session1.within '.feed-content' do
+          expect(session1.find_all('.feed-bubble').count).to eq 2
+        end
+      end
+
+      it 'allows player to go again' do
+        expect(session1).to have_button('Request', disabled: false)
+      end
+    end
+
+    context 'when current player requests card from deck and deck is empty' do
+      before do
+        game.deck.cards = []
+        refresh_sessions(sessions)
+        session1.click_on 'Draw from Deck'
+        refresh_sessions(sessions)
+      end
+
+      it 'posts 1 message in the feed' do
+        session1.within '.feed-content' do
+          expect(session1.find_all('.feed-bubble').count).to eq 1
+        end
+      end
+
+      it 'does not allow player to go again' do
+        expect(session1).to have_button('Draw from Deck', disabled: true)
+      end
+
+      it 'switches to next player' do
+        expect(session2).to have_button('Request', disabled: false)
       end
     end
   end

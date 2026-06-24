@@ -33,6 +33,10 @@ class Game
     @players.push(player)
   end
 
+  def add_turn_result_to_feed(turn_result)
+    feed.push(turn_result)
+  end
+
   def started?
     !!is_started
   end
@@ -82,7 +86,7 @@ class Game
 
     switch_turn unless turn_result.go_again?
 
-    feed.push(turn_result)
+    add_turn_result_to_feed(turn_result)
 
     turn_result
   end
