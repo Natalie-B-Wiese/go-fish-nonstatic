@@ -45,12 +45,34 @@ class Server < Sinatra::Base
   end
 
   get '/game' do
-    if authenticated?(session) && self.class.game.started? && !self.class.game.game_over?
-      slim :game,
-           locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key], game: self.class.game }
-    else
-      redirect '/'
+    # if authenticated?(session) && self.class.game.started? && !self.class.game.game_over?
+    respond_to do |f|
+      f.html do
+        slim :game, locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key],
+                              game: self.class.game }
+      end
+
+      f.json do
+        authenticate!
+        game = self.class.game
+
+        # optional parameter:
+        # "winners": {
+        #   "type": ["array", "null"],
+        #   "items": {
+        #     "type": "string"
+        #   }
+        # }
+        { 'turn_index' => 'game.current_player_index',
+          'players' => 'game.players.map(&:as_json)',
+          'hand' => 'current_player.cards.map(&:as_json)',
+          'round_results' => 'game.feed.as_json' }.to_json
+      end
     end
+
+    # else
+    # redirect '/'
+    # end
   end
 
   get '/game-over' do
@@ -62,8 +84,7 @@ class Server < Sinatra::Base
     end
   end
 
-  def add_player(name)
-    api_key = Base64.urlsafe_encode64("#{name}:#{(Time.now.to_f * 1000).to_i}")
+  def add_player(name, api_key)
     session[:api_key] = api_key
 
     self.class.api_keys[api_key] = name
@@ -72,8 +93,9 @@ class Server < Sinatra::Base
 
   post '/join' do
     name = params[:name] || JSON.parse(request.body.read)['name']
+    api_key = Base64.urlsafe_encode64("#{name}:#{(Time.now.to_f * 1000).to_i}")
 
-    add_player(name)
+    add_player(name, api_key)
 
     respond_to do |f|
       f.html { redirect '/lobby' }
@@ -89,8 +111,16 @@ class Server < Sinatra::Base
   end
 
   def authenticate!
+    auth
+
+    halt 401 unless auth.provided? && auth.basic?
+
     # return a status code of 403
-    halt 401
+    halt 401 unless self.class.api_keys.key?(auth.username)
+  end
+
+  def auth
+    Rack::Auth::Basic::Request.new(request.env)
   end
 
   def authenticated?(session)
@@ -131,6 +161,11 @@ class Server < Sinatra::Base
   end
 
   def current_player
+    self.class.game.player_by_name(self.class.api_keys[session[:api_key]])
+  end
+
+  # unused
+  def current_player_authenticated
     auth = Rack::Auth::Basic::Request.new(request.env)
 
     return nil unless auth.provided? && auth.basic?

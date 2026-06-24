@@ -73,6 +73,33 @@ class Player
     book
   end
 
+  # "required": [
+  #   "name",
+  #   "books",
+  #   "book_count"
+  # ],
+  # "properties": {
+  #   "name": {
+  #     "type": "string"
+  #   },
+  #   "books": {
+  #     "type": "array",
+  #     "items": {
+  #       "type": "string"
+  #     }
+  #   },
+  #   "book_count": {
+  #     "type": "integer"
+  #   }
+
+  def as_json
+    {
+      'name' => name,
+      'books' => books.map(&:rank),
+      'book_count' => book_count
+    }.to_json
+  end
+
   private
 
   def cards_with_rank(rank)

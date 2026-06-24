@@ -54,4 +54,11 @@ class Card
   def to_image_name
     "#{rank_to_s.downcase}_of_#{suit.downcase}.png"
   end
+
+  def as_json
+    {
+      'rank' => rank,
+      'suit' => suit
+    }.to_json
+  end
 end

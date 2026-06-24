@@ -74,6 +74,39 @@ class TurnResult
     end
   end
 
+  #   {
+  #   "id": "file:/round_result.json#",
+  #   "type": "object",
+  #   "required": [
+  #     "current_player",
+  #     "rank",
+  #     "went_fishing",
+  #     "display"
+  #   ],
+  #   "properties": {
+  #     "current_player": {
+  #       "type": "string"
+  #     },
+  #     "rank": {
+  #       "type": "string"
+  #     },
+  #     "went_fishing": {
+  #       "type": "boolean"
+  #     },
+  #     "display": {
+  #       "type": "string"
+  #     }
+  #   }
+  # }
+  def as_json
+    {
+      'current_player' => current_player.name,
+      'rank' => rank_requested,
+      'went_fishing' => went_fish?,
+      'display' => request_message + action_message + result_message
+    }.to_json
+  end
+
   private
 
   def deck_empty?
