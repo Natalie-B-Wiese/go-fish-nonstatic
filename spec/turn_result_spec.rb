@@ -93,6 +93,15 @@ describe TurnResult do
   end
 
   describe '#action_message' do
+    context 'when player does not have cards' do
+      let(:turn_result) { TurnResult.new(current_player: current_player) }
+
+      it 'returns an empty string' do
+        result = turn_result.action_message
+        expect(result).to eq ''
+      end
+    end
+
     context 'when player made a request and receives from opponent' do
       let(:turn_result) do
         TurnResult.new(current_player: current_player, opponent_player: opponent_player,
@@ -131,6 +140,15 @@ describe TurnResult do
   end
 
   describe '#result_message' do
+    context 'when player does not have cards' do
+      let(:turn_result) { TurnResult.new(current_player: current_player) }
+
+      it 'returns an empty string' do
+        result = turn_result.result_message
+        expect(result).to eq ''
+      end
+    end
+
     context 'when player receives requested card from opponent' do
       context 'when was_book_made is false' do
         let(:turn_result) do
@@ -283,16 +301,6 @@ describe TurnResult do
           expect(result).to match(/#{TurnResult::BOOK}/)
         end
       end
-    end
-  end
-
-  # current_player:, opponent_player: nil, rank_requested: nil,
-  #             cards_received_opponent: [], card_received_deck: nil, was_book_made: false
-  xcontext 'when opponent_player is nil, rank_requested is nil, cards_received is nil' do
-    let(:turn_result) { TurnResult.new(current_player: current_player) }
-    it 'returns player out of game message' do
-      result = turn_result.feed_messages
-      expect(result).to match(/#{TurnResult::DISQUALIFIED}/i)
     end
   end
 end

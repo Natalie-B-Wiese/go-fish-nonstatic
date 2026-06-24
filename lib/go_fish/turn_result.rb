@@ -37,6 +37,8 @@ class TurnResult
   end
 
   def action_message
+    return '' if player_out_of_cards?
+
     if cards_received_opponent.nil? || cards_received_opponent.empty?
       "#{GO_FISH}: #{opponent_player.name} doesn't have any #{rank_requested}s"
     else
