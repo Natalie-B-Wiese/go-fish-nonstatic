@@ -1,5 +1,4 @@
 meta name="api_key" content=api_key
-p #{name}
 
 - my_player = game.player_by_name(name)
 
@@ -28,7 +27,7 @@ main.game-view
 								div
 									| Books:#{' '}
 									span
-										strong TODO: book count here
+										strong #{player.book_count}
 
 						div.accordion__content
 							div.flex.flex-row.flex-no-wrap.justify-between
