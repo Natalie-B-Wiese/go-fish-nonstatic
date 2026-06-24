@@ -6,6 +6,7 @@ class TurnResult
   DISQUALIFIED = 'out of the game'
   REQUEST = 'requested a'
   GO_FISH = 'Go Fish'
+  TAKE_DECK = 'drew a'
 
   attr_reader :current_player, :opponent_player, :rank_requested, :cards_received_opponent
 
@@ -36,12 +37,21 @@ class TurnResult
     end
   end
 
+  def result_message
+    result = ''
+    result += "#{current_player.name} #{TAKE_DECK} card from the deck. " unless card_received_deck.nil?
+    result += "#{current_player.name} #{GO_AGAIN}. " if go_again?
+    result += "#{current_player.name} #{BOOK} #{rank_received}s!" if book_made?
+
+    result
+  end
+
   def to_s
     "current_player: #{current_player.name}, opponent: #{opponent_player.name}, rank_requested #{rank_requested}, cards_received_opponent.length #{cards_received_opponent.length} card_received_deck: #{card_received_deck}, was_book_made #{was_book_made}"
   end
 
   def go_again?
-    (!rank_received.nil? && rank_received == rank_requested) || was_book_made == true
+    (!rank_received.nil? || was_book_made == true) && rank_received == rank_requested
   end
 
   def rank_received
@@ -70,10 +80,6 @@ class TurnResult
     else
       "#{current_player.name} drew a card from the deck."
     end
-  end
-
-  def book_message
-    "#{current_player.name} #{BOOK} #{rank_received}s!"
   end
 
   def out_of_game_message
