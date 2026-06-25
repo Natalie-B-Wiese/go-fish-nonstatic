@@ -47,7 +47,7 @@ class Server < Sinatra::Base
   get '/game' do
     respond_to do |f|
       f.html do
-        if authenticated?(session[:api_key]) && self.class.game.started? && !self.class.game.game_over?
+        if authenticated?(session[:api_key]) && self.class.game.in_progress?
           slim :game, locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key],
                                 game: self.class.game }
         else
