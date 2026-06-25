@@ -79,11 +79,11 @@ class Server < Sinatra::Base
   post '/game' do
     authenticate!
 
-    # TODO: perhaps handle case where bot is out of cards?
-    rank = params[:rank]
-    opponent_name = params[:player]
-
-    request_card(opponent_name, rank)
+    if current_bot_player.out_of_cards?
+      take_deck_card
+    else
+      bot_request_card
+    end
 
     self.class.game.data(current_bot_player).to_json
   end
@@ -99,17 +99,28 @@ class Server < Sinatra::Base
     redirect '/game'
   end
 
+  def bot_request_card
+    rank = params[:rank]
+    opponent_name = params[:player]
+
+    request_card(opponent_name, rank)
+  end
+
   # Only for human (html)
   post '/take-deck-card' do
     return redirect '/' unless authenticated?(session[:api_key])
     return redirect if self.class.api_keys[session[:api_key]] != self.class.game.current_player.name
     return redirect unless self.class.game.current_player.out_of_cards?
 
+    take_deck_card
+
+    redirect '/game'
+  end
+
+  def take_deck_card
     turn_result = self.class.game.request_deck_card
     self.class.game.add_turn_result_to_feed(turn_result)
     self.class.game.switch_turn unless turn_result.go_again?
-
-    redirect '/game'
   end
 
   get '/lobby' do

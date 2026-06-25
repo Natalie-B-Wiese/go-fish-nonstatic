@@ -2,12 +2,16 @@
   "id": "file:/game.json#",
   "type": "object",
   "required": [
+    "started",
     "turn_index",
     "players",
     "hand",
     "round_results"
   ],
   "properties": {
+    "started": {
+      "type": "boolean"
+    },
     "turn_index": {
       "type": "integer"
     },

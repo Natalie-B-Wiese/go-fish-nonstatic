@@ -122,7 +122,8 @@ class Game
   end
 
   def data(calling_player)
-    hash = { 'turn_index' => current_player_index,
+    hash = { 'started' => started?,
+             'turn_index' => current_player_index,
              'players' => players.map(&:data),
              'hand' => calling_player.cards.map(&:data),
              'round_results' => feed.map(&:data) }

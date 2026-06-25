@@ -154,22 +154,20 @@ describe Server, type: :request do
 
     before do
       Server.game.start
-
-      # from api_client.rb:
-      # response = post('/game', body: { rank: move[:rank], player: move[:target] })
-
-      post '/game', { 'rank' => 'A', 'player' => 'Bot 2' }.to_json, header(bot1_authorization)
     end
 
     it 'does not throw an error' do
+      post '/game', { 'rank' => 'A', 'player' => 'Bot 2' }.to_json, header(bot1_authorization)
       expect(last_response).to be_ok
     end
 
     it 'returns a response matching the game schema' do
+      post '/game', { 'rank' => 'A', 'player' => 'Bot 2' }.to_json, header(bot1_authorization)
       expect(last_response).to match_json_schema('game')
     end
 
     it 'has the correct hand' do
+      post '/game', { 'rank' => 'A', 'player' => 'Bot 2' }.to_json, header(bot1_authorization)
       hand_result = JSON.parse(last_response.body)['hand']
       expected_hand = Server.game.players[0].cards.map(&:data)
       expect(hand_result).to eq expected_hand
@@ -177,7 +175,43 @@ describe Server, type: :request do
 
     # Bot plays a round: sends rank + target player
     it 'preforms a move' do
+      post '/game', { 'rank' => 'A', 'player' => 'Bot 2' }.to_json, header(bot1_authorization)
       expect(Server.game.players[0].card_count).not_to eq Game::SMALL_GAME_CARDS
+    end
+
+    context 'when out of cards' do
+      let!(:bot1_authorization) { create_and_join_bot('Bot 1') }
+      let!(:bot2_authorization) { create_and_join_bot('Bot 2') }
+
+      before do
+        Server.game.players[0].cards = []
+      end
+
+      context 'when deck has cards' do
+        before do
+          post '/game', { 'rank' => nil, 'player' => 'Bot 2' }.to_json, header(bot1_authorization)
+        end
+
+        it 'adds a card to the player' do
+          cards = Server.game.players[0].cards
+          expect(cards.count).to eq 1
+        end
+
+        it 'allows player to go again' do
+          expect(Server.game.current_player_index).to eq 0
+        end
+      end
+
+      context 'when deck is empty' do
+        before do
+          Server.game.deck.cards = []
+          post '/game', { 'rank' => nil, 'player' => 'Bot 2' }.to_json, header(bot1_authorization)
+        end
+
+        it 'switches turns' do
+          expect(Server.game.current_player_index).to eq 1
+        end
+      end
     end
   end
 

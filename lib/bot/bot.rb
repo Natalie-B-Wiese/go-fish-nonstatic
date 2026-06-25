@@ -26,7 +26,10 @@ class Bot
   def game_over? = game_over
 
   def try_to_take_turn
-    players, hand, turn_index, round_results, winners = parse_state(client.game_state)
+    started, players, hand, turn_index, round_results, winners = parse_state(client.game_state)
+
+    return unless started==true
+
     log_state_change(players:, hand:, turn_index:)
     log_opponent_results(round_results)
     strategy.record_round_results(round_results)
@@ -41,7 +44,7 @@ class Bot
   attr_writer :name, :strategy
 
   def parse_state(state)
-    state.values_at('players', 'hand', 'turn_index', 'round_results', 'winners')
+    state.values_at('started', 'players', 'hand', 'turn_index', 'round_results', 'winners')
   end
 
   def handle_game_over(winners)
@@ -57,7 +60,7 @@ class Bot
   end
 
   def my_turn?(players:, hand:, turn_index:)
-    players.length >= 2 && hand.any? && current_name(players:, turn_index:) == name
+    players.length >= 2 && current_name(players:, turn_index:) == name
   end
 
   def current_name(players:, turn_index:)
