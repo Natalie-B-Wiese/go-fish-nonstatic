@@ -74,13 +74,6 @@ class Server < Sinatra::Base
     end
   end
 
-  def add_player(name, api_key)
-    session[:api_key] = api_key
-
-    self.class.api_keys[api_key] = name
-    self.class.game.add_player(name)
-  end
-
   post '/join' do
     name = params[:name] || JSON.parse(request.body.read)['name']
     api_key = Base64.urlsafe_encode64("#{name}:#{(Time.now.to_f * 1000).to_i}")
@@ -117,25 +110,6 @@ class Server < Sinatra::Base
     end
   end
 
-  def authenticate!
-    halt 401 unless authenticated?
-  end
-
-  def auth
-    Rack::Auth::Basic::Request.new(request.env)
-  end
-
-  # if api_key is nil, it will treat it like a bot
-  def authenticated?(api_key = nil)
-    if api_key.nil?
-      return false unless auth.provided? && auth.basic?
-
-      api_key = auth.username
-    end
-
-    self.class.api_keys.key?(api_key)
-  end
-
   post '/request-card' do
     return redirect '/' unless authenticated?(session[:api_key])
     return redirect if self.class.api_keys[session[:api_key]] != self.class.game.current_player.name
@@ -167,21 +141,50 @@ class Server < Sinatra::Base
     end
   end
 
-  def current_bot_player
-    auth = Rack::Auth::Basic::Request.new(request.env)
+  private
 
-    return nil unless auth.provided? && auth.basic?
+  def authenticate!
+    halt 401 unless authenticated?
+  end
 
-    api_key = auth.username
+  def auth
+    Rack::Auth::Basic::Request.new(request.env)
+  end
+
+  # if api_key is nil, it will treat it like a bot
+  def authenticated?(api_key = nil)
+    if api_key.nil?
+      return false unless auth.provided? && auth.basic?
+
+      api_key = auth.username
+    end
+
+    self.class.api_keys.key?(api_key)
+  end
+
+  def add_player(name, api_key)
+    session[:api_key] = api_key
+
+    self.class.api_keys[api_key] = name
+    self.class.game.add_player(name)
+  end
+
+  def request_card(opponent_name, request_rank)
+    opponent_player = self.class.game.player_by_name(opponent_name)
+    self.class.game.play_turn(rank: request_rank, opponent: opponent_player)
+  end
+
+  def player_by_api_key(api_key)
     name = self.class.api_keys[api_key]
 
     self.class.game.player_by_name(name)
   end
 
-  private
+  def current_bot_player
+    auth = Rack::Auth::Basic::Request.new(request.env)
 
-  def request_card(opponent_name, request_rank)
-    opponent_player = self.class.game.player_by_name(opponent_name)
-    self.class.game.play_turn(rank: request_rank, opponent: opponent_player)
+    return nil unless auth.provided? && auth.basic?
+
+    player_by_api_key(auth.username)
   end
 end
