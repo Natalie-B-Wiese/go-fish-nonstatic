@@ -135,8 +135,8 @@ describe Server, type: :request do
       expect(last_response).to be_ok
     end
 
-    it 'returns a response matching the turn result schema' do
-      expect(last_response).to match_json_schema('round_result')
+    it 'returns a response matching the game schema' do
+      expect(last_response).to match_json_schema('game')
     end
 
     # Bot plays a round: sends rank + target player

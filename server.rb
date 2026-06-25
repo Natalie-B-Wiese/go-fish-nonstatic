@@ -111,9 +111,9 @@ class Server < Sinatra::Base
         rank = data['rank']
         opponent_name = data['player']
 
-        turn_result = request_card(opponent_name, rank)
+        request_card(opponent_name, rank)
 
-        turn_result.data.to_json
+        self.class.game.data.to_json
       end
     end
   end
