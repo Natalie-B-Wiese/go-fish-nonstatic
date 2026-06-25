@@ -73,20 +73,9 @@ class Game
   end
 
   def play_turn(rank:, opponent:)
-    cards_taken_from_opponent = opponent.take_cards_with_rank(rank)
-    turn_result = TurnResult.new(current_player: current_player, opponent_player: opponent, rank_requested: rank,
-                                 cards_received_opponent: cards_taken_from_opponent)
-
-    if cards_taken_from_opponent.empty?
-      request_deck_card(turn_result)
-    else
-      current_player.add_cards(cards_taken_from_opponent)
-    end
-
-    if turn_result.rank_received
-      book_made = current_player.try_make_book(turn_result.rank_received)
-      turn_result.was_book_made = true if book_made
-    end
+    turn_result = TurnResult.new(current_player: current_player, opponent_player: opponent, rank_requested: rank)
+    preform_move(turn_result)
+    try_make_book(turn_result) if turn_result.rank_received
 
     switch_turn unless turn_result.go_again?
 
@@ -156,5 +145,21 @@ class Game
 
   def most_books
     players.max_by(&:book_count).book_count
+  end
+
+  def preform_move(turn_result)
+    cards_taken_from_opponent = turn_result.opponent.take_cards_with_rank(turn_result.rank_requested)
+
+    if cards_taken_from_opponent.empty?
+      request_deck_card(turn_result)
+    else
+      turn_result.cards_received_opponent = cards_taken_from_opponent
+      current_player.add_cards(cards_taken_from_opponent)
+    end
+  end
+
+  def try_make_book(turn_result)
+    book_made = current_player.try_make_book(turn_result.rank_received)
+    turn_result.was_book_made = true if book_made
   end
 end

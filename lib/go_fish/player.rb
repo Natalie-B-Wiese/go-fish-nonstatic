@@ -73,25 +73,6 @@ class Player
     book
   end
 
-  # "required": [
-  #   "name",
-  #   "books",
-  #   "book_count"
-  # ],
-  # "properties": {
-  #   "name": {
-  #     "type": "string"
-  #   },
-  #   "books": {
-  #     "type": "array",
-  #     "items": {
-  #       "type": "string"
-  #     }
-  #   },
-  #   "book_count": {
-  #     "type": "integer"
-  #   }
-
   def data
     {
       'name' => name,
