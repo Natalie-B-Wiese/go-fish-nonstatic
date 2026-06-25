@@ -107,7 +107,7 @@ class TurnResult
   private
 
   def deck_empty?
-    !cards_received_opponent.empty? || card_received_deck.nil?
+    went_fish? && card_received_deck.nil?
   end
 
   def player_out_of_cards?
