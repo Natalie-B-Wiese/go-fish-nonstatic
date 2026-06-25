@@ -24,18 +24,14 @@ class Server < Sinatra::Base
   end
 
   get '/' do
-    if authenticated?(session[:api_key])
-      if self.class.game.started?
-        if self.class.game.game_over?
-          redirect '/game-over'
-        else
-          redirect '/game'
-        end
-      else
-        redirect '/lobby'
-      end
+    return slim :login unless authenticated?(session[:api_key])
+
+    if !self.class.game.started?
+      redirect '/lobby'
+    elsif self.class.game.game_over?
+      redirect '/game-over'
     else
-      slim :login
+      redirect '/game'
     end
   end
 
@@ -46,22 +42,8 @@ class Server < Sinatra::Base
 
   get '/game' do
     respond_to do |f|
-      f.html do
-        if authenticated?(session[:api_key]) && self.class.game.in_progress?
-          slim :game, locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key],
-                                game: self.class.game }
-        else
-          redirect '/'
-        end
-      end
-
-      f.json do
-        authenticate!
-        # TODO: perhaps handle case where game isn't started?
-        game = self.class.game
-
-        game.data(current_bot_player).to_json
-      end
+      f.html { get_game_html }
+      f.json { get_game_json }
     end
   end
 
@@ -184,5 +166,20 @@ class Server < Sinatra::Base
     return nil unless auth.provided? && auth.basic?
 
     player_by_api_key(auth.username)
+  end
+
+  def get_game_html
+    if authenticated?(session[:api_key]) && self.class.game.in_progress?
+      slim :game, locals: { name: self.class.api_keys[session[:api_key]],
+                            api_key: session[:api_key], game: self.class.game }
+    else
+      redirect '/'
+    end
+  end
+
+  def get_game_json
+    authenticate!
+
+    self.class.game.data(current_bot_player).to_json
   end
 end
