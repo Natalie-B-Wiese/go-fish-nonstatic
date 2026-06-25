@@ -133,7 +133,6 @@ describe Server, type: :request do
 
       it 'has correct hand for bot that is not current player' do
         get '/game', {}, header(bot2_authorization)
-        puts 'second'
 
         hand_result = JSON.parse(last_response.body)['hand']
         expected_hand = Server.game.players[1].cards.map(&:data)
