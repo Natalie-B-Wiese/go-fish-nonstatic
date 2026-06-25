@@ -60,20 +60,58 @@ describe Server, type: :request do
              { 'HTTP_ACCEPT' => 'application/json', 'CONTENT_TYPE' => 'application/json' }
 
         Server.game.start
+      end
 
+      it 'allows authorized bots' do
         api_key = JSON.parse(last_response.body)['api_key']
         encoded = Base64.encode64("#{api_key}:X").strip
 
         get '/game', {},
             { 'HTTP_ACCEPT' => 'application/json', 'CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => "Basic #{encoded}" }
-      end
 
-      it 'allows authorized bots' do
         expect(last_response).to be_ok
       end
 
-      it 'returns a response matching the game schema' do
-        expect(last_response).to match_json_schema('game')
+      context 'when game_over is false' do
+        before do
+          api_key = JSON.parse(last_response.body)['api_key']
+          encoded = Base64.encode64("#{api_key}:X").strip
+
+          get '/game', {},
+              { 'HTTP_ACCEPT' => 'application/json', 'CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => "Basic #{encoded}" }
+        end
+
+        it 'returns a response matching the game schema' do
+          expect(last_response).to match_json_schema('game')
+        end
+
+        it 'does not include winners in response' do
+          expect(JSON.parse(last_response.body).keys).to_not include 'winners'
+        end
+      end
+
+      context 'when game_over is true' do
+        before do
+          Server.game.deck.cards = []
+
+          player1 = Server.game.players[0]
+
+          player1.cards = []
+          add_books_to_player(player1, Game::BOOKS_TO_WIN)
+
+          api_key = JSON.parse(last_response.body)['api_key']
+          encoded = Base64.encode64("#{api_key}:X").strip
+          get '/game', {},
+              { 'HTTP_ACCEPT' => 'application/json', 'CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => "Basic #{encoded}" }
+        end
+
+        it 'returns a response matching the game schema' do
+          expect(last_response).to match_json_schema('game')
+        end
+
+        it 'includes winners in response' do
+          expect(JSON.parse(last_response.body).keys).to include 'winners'
+        end
       end
     end
   end
@@ -104,6 +142,12 @@ describe Server, type: :request do
     # Bot plays a round: sends rank + target player
     it 'preforms a move' do
       expect(Server.game.players[0].card_count).not_to eq Game::SMALL_GAME_CARDS
+    end
+  end
+
+  def add_books_to_player(player, num_books = 1)
+    num_books.times do
+      player.books += [Book.new('4')]
     end
   end
 end

@@ -57,20 +57,10 @@ class Server < Sinatra::Base
 
       f.json do
         authenticate!
+        # TODO: perhaps handle case where game isn't started?
         game = self.class.game
-        # TODO: perhaps handle case where game isn't started
 
-        # optional parameter:
-        # "winners": {
-        #   "type": ["array", "null"],
-        #   "items": {
-        #     "type": "string"
-        #   }
-        # }
-        { 'turn_index' => game.current_player_index,
-          'players' => game.players.map(&:data),
-          'hand' => current_player.cards.map(&:data),
-          'round_results' => game.feed.map(&:data) }.to_json
+        game.data.to_json
       end
     end
   end
