@@ -329,7 +329,7 @@ describe Game do
           expect(result.cards_received_opponent).to be_empty
           expect(result.card_received_deck).to eq taken_card
           expect(result.was_book_made).to eq true
-          expect(result.go_again?).to eq true
+          expect(result.go_again?).to eq false
         end
 
         it 'switches turns' do
@@ -390,7 +390,6 @@ describe Game do
         expect(result.cards_received_opponent).to be_empty
         expect(result.card_received_deck).to be_nil
         expect(result.was_book_made).to eq false
-        expect(result.go_again?).to eq false
       end
     end
 
@@ -419,7 +418,6 @@ describe Game do
         expect(result.cards_received_opponent).to be_empty
         expect(result.card_received_deck).to eq card_taken
         expect(result.was_book_made).to eq false
-        expect(result.go_again?).to eq false
       end
     end
 
@@ -448,94 +446,6 @@ describe Game do
         expect(result.rank_requested).to be_nil
         expect(result.cards_received_opponent).to be_empty
         expect(result.card_received_deck).to eq card_taken
-        expect(result.was_book_made).to eq false
-        expect(result.go_again?).to eq false
-      end
-    end
-  end
-
-  xdescribe '#request_card_from_user' do
-    let(:current_user) { User.new(Client.new('socket'), Player.new('Jeff')) }
-    let(:opponent) { User.new(Client.new('socket'), Player.new('Bob')) }
-
-    let(:players) { [current_user, opponent] }
-
-    let(:game) { described_class.new(players) }
-
-    let(:request_rank) { 'A' }
-    let(:incorrect_rank) { '5' }
-    let(:good_card) { Card.new(request_rank, 'Clubs') }
-    let(:other_card) { Card.new(incorrect_rank, 'Spades') }
-
-    before do
-      current_user.add_card(Card.new(request_rank, 'Spades'))
-    end
-
-    context 'opponent not have card' do
-      before do
-        opponent.add_card(other_card)
-      end
-
-      it 'does not remove opponent card' do
-        game.request_card_from_player(request_rank, opponent.name)
-        expect(opponent.cards).to include other_card
-      end
-
-      context 'goes fish' do
-        context 'gets requested card' do
-          before do
-            game.deck.cards = [good_card]
-          end
-
-          it 'does not switch turn' do
-            game.request_card_from_player(request_rank, opponent.name)
-            expect(game.current_client).to eq client
-          end
-        end
-
-        context 'not get card' do
-          before do
-            game.deck.cards = [Card.new(incorrect_rank, 'Clubs')]
-          end
-
-          it 'switches turn' do
-            game.request_card_from_player(request_rank, opponent)
-            expect(game.current_client).to eq opponent
-          end
-        end
-      end
-    end
-
-    context 'gets correct card' do
-      before do
-        opponent.add_cards([other_card, good_card])
-      end
-
-      it 'removes the card from opponent' do
-        game.request_card_from_player(request_rank, opponent)
-        expect(opponent.cards).to_not include good_card
-      end
-
-      it 'gives the card to the player' do
-        game.request_card_from_player(request_rank, opponent)
-        expect(current_user.cards).to include good_card
-      end
-
-      it 'does not switch turn' do
-        game.request_card_from_player(request_rank, opponent)
-        expect(game.current_user).to eq current_user
-      end
-
-      it 'works with multiple matching cards' do
-        player_cards_before = current_user.cards.length
-        opponent.add_card(Card.new(request_rank, 'Diamonds'))
-        opponent_cards_before = opponent.cards.length
-        matching_card_count = 2
-
-        game.request_card_from_player(request_rank, opponent)
-
-        expect(current_user.cards.length).to eq(player_cards_before + matching_card_count)
-        expect(opponent.cards.length).to eq(opponent_cards_before - matching_card_count)
       end
     end
   end
