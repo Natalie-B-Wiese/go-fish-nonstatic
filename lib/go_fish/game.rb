@@ -45,6 +45,10 @@ class Game
     book_count == BOOKS_TO_WIN
   end
 
+  def in_progress?
+    started? && !game_over?
+  end
+
   def current_player
     players[current_player_index]
   end
