@@ -93,23 +93,20 @@ class Server < Sinatra::Base
     redirect '/game'
   end
 
-  # this only happens for the bot
+  # this only happens for the bot (json)
   post '/game' do
-    respond_to do |f|
-      f.json do
-        authenticate!
+    authenticate!
 
-        # TODO: perhaps handle case where bot is out of cards?
-        rank = params[:rank]
-        opponent_name = params[:player]
+    # TODO: perhaps handle case where bot is out of cards?
+    rank = params[:rank]
+    opponent_name = params[:player]
 
-        request_card(opponent_name, rank)
+    request_card(opponent_name, rank)
 
-        self.class.game.data(current_bot_player).to_json
-      end
-    end
+    self.class.game.data(current_bot_player).to_json
   end
 
+  # Only for human (html)
   post '/request-card' do
     return redirect '/' unless authenticated?(session[:api_key])
     return redirect if self.class.api_keys[session[:api_key]] != self.class.game.current_player.name
@@ -120,6 +117,7 @@ class Server < Sinatra::Base
     redirect '/game'
   end
 
+  # Only for human (html)
   post '/take-deck-card' do
     return redirect '/' unless authenticated?(session[:api_key])
     return redirect if self.class.api_keys[session[:api_key]] != self.class.game.current_player.name
