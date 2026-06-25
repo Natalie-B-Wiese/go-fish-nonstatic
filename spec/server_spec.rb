@@ -514,7 +514,7 @@ RSpec.describe Server do
       end
 
       it 'takes that player to login page' do
-        session1.save_and_open_page
+        # session1.save_and_open_page
         expect(session1).to have_current_path('/')
       end
 

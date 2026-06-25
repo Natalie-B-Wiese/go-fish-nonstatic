@@ -110,6 +110,24 @@ class Server < Sinatra::Base
     redirect '/game'
   end
 
+  # this only happens for the bot
+  post '/game' do
+    respond_to do |f|
+      f.json do
+        authenticate!
+
+        # TODO: perhaps handle case where bot is out of cards?
+        data = JSON.parse(request.body.read)
+        rank = data['rank']
+        opponent_name = data['player']
+
+        turn_result = request_card(opponent_name, rank)
+
+        turn_result.data.to_json
+      end
+    end
+  end
+
   def authenticate!
     auth
 
@@ -133,9 +151,7 @@ class Server < Sinatra::Base
 
     opponent_name = params[:opponent_name]
     request_rank = params[:rank]
-    opponent_player = self.class.game.player_by_name(opponent_name)
-
-    self.class.game.play_turn(rank: request_rank, opponent: opponent_player)
+    request_card(opponent_name, request_rank)
     redirect '/game'
   end
 
@@ -174,5 +190,12 @@ class Server < Sinatra::Base
     name = self.class.api_keys[api_key]
 
     game.player_by_name(name)
+  end
+
+  private
+
+  def request_card(opponent_name, request_rank)
+    opponent_player = self.class.game.player_by_name(opponent_name)
+    self.class.game.play_turn(rank: request_rank, opponent: opponent_player)
   end
 end
