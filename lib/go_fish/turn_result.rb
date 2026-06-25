@@ -26,7 +26,7 @@ class TurnResult
     if player_out_of_cards?
       "#{current_player.name} #{NO_CARDS}. "
     else
-      "#{current_player.name} #{REQUEST} #{rank_requested} from #{opponent_player.name}."
+      "#{current_player.name} #{REQUEST} #{rank_requested} from #{opponent_player.name}. "
     end
   end
 
@@ -37,7 +37,7 @@ class TurnResult
       "#{GO_FISH}: #{opponent_player.name} doesn't have any #{rank_requested}s"
     else
       card_word = cards_received_opponent.length == 1 ? 'card' : 'cards'
-      "#{opponent_player.name} gave #{cards_received_opponent.length} #{card_word} to #{current_player.name}."
+      "#{opponent_player.name} gave #{cards_received_opponent.length} #{card_word} to #{current_player.name}. "
     end
   end
 
@@ -52,7 +52,7 @@ class TurnResult
     end
 
     result += "#{current_player.name} #{GO_AGAIN}. " if go_again?
-    result += "#{current_player.name} #{BOOK} #{rank_received}s!" if book_made?
+    result += "#{current_player.name} #{BOOK} #{rank_received}s! " if book_made?
 
     result
   end
