@@ -114,6 +114,32 @@ describe Server, type: :request do
         end
       end
     end
+
+    context 'with multiple authenticated bots' do
+      let!(:bot1_authorization) { create_and_join_bot('Bot 1') }
+      let!(:bot2_authorization) { create_and_join_bot('Bot 2') }
+
+      before do
+        Server.game.start
+      end
+
+      it 'has the correct hand for bot that is current player' do
+        get '/game', {}, header(bot1_authorization)
+
+        hand_result = JSON.parse(last_response.body)['hand']
+        expected_hand = Server.game.players[0].cards.map(&:data)
+        expect(hand_result).to eq expected_hand
+      end
+
+      it 'has correct hand for bot that is not current player' do
+        get '/game', {}, header(bot2_authorization)
+        puts 'second'
+
+        hand_result = JSON.parse(last_response.body)['hand']
+        expected_hand = Server.game.players[1].cards.map(&:data)
+        expect(hand_result).to eq expected_hand
+      end
+    end
   end
 
   describe 'POST /game' do
@@ -126,9 +152,7 @@ describe Server, type: :request do
       # from api_client.rb:
       # response = post('/game', body: { rank: move[:rank], player: move[:target] })
 
-      post '/game', { 'rank' => 'A', 'player' => 'Bot 2' }.to_json,
-           { 'HTTP_ACCEPT' => 'application/json', 'CONTENT_TYPE' => 'application/json',
-             'HTTP_AUTHORIZATION' => "#{bot1_authorization}" }
+      post '/game', { 'rank' => 'A', 'player' => 'Bot 2' }.to_json, header(bot1_authorization)
     end
 
     it 'does not throw an error' do
@@ -137,6 +161,12 @@ describe Server, type: :request do
 
     it 'returns a response matching the game schema' do
       expect(last_response).to match_json_schema('game')
+    end
+
+    it 'has the correct hand' do
+      hand_result = JSON.parse(last_response.body)['hand']
+      expected_hand = Server.game.players[0].cards.map(&:data)
+      expect(hand_result).to eq expected_hand
     end
 
     # Bot plays a round: sends rank + target player
@@ -149,5 +179,10 @@ describe Server, type: :request do
     num_books.times do
       player.books += [Book.new('4')]
     end
+  end
+
+  def header(bot_authorization)
+    { 'HTTP_ACCEPT' => 'application/json', 'CONTENT_TYPE' => 'application/json',
+      'HTTP_AUTHORIZATION' => "#{bot_authorization}" }
   end
 end

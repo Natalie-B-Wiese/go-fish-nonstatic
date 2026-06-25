@@ -60,7 +60,7 @@ class Server < Sinatra::Base
         # TODO: perhaps handle case where game isn't started?
         game = self.class.game
 
-        game.data.to_json
+        game.data(current_bot_player).to_json
       end
     end
   end
@@ -113,7 +113,7 @@ class Server < Sinatra::Base
 
         request_card(opponent_name, rank)
 
-        self.class.game.data.to_json
+        self.class.game.data(current_bot_player).to_json
       end
     end
   end
@@ -166,12 +166,7 @@ class Server < Sinatra::Base
     end
   end
 
-  def current_player
-    self.class.game.player_by_name(self.class.api_keys[session[:api_key]])
-  end
-
-  # unused
-  def current_player_authenticated
+  def current_bot_player
     auth = Rack::Auth::Basic::Request.new(request.env)
 
     return nil unless auth.provided? && auth.basic?
@@ -179,7 +174,7 @@ class Server < Sinatra::Base
     api_key = auth.username
     name = self.class.api_keys[api_key]
 
-    game.player_by_name(name)
+    self.class.game.player_by_name(name)
   end
 
   private

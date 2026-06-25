@@ -117,10 +117,10 @@ class Game
     self.current_player_index = 0 if current_player_index >= players.length
   end
 
-  def data
+  def data(calling_player)
     hash = { 'turn_index' => current_player_index,
              'players' => players.map(&:data),
-             'hand' => current_player.cards.map(&:data),
+             'hand' => calling_player.cards.map(&:data),
              'round_results' => feed.map(&:data) }
 
     hash['winners'] = [winning_player.name] if game_over?
