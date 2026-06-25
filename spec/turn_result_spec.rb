@@ -28,7 +28,7 @@ describe TurnResult do
       end
     end
 
-    context 'when player is out of cards and deck has cards' do
+    context 'when player is out of cards' do
       let(:turn_result) do
         TurnResult.new(current_player: current_player, card_received_deck: Card.new(rank_requested, 'Spades'))
       end
@@ -37,57 +37,16 @@ describe TurnResult do
         result = turn_result.request_message
         expect(result).to match(/#{current_player_name}.*#{TurnResult::NO_CARDS}/)
       end
-
-      it 'does not return deck empty message' do
-        result = turn_result.request_message
-        expect(result).to_not match(/#{current_player_name}.*#{TurnResult::EMPTY_DECK}/)
-      end
-
-      it 'returns go again message' do
-        result = turn_result.request_message
-        expect(result).to match(/#{current_player_name}.*#{TurnResult::GO_AGAIN}/)
-      end
-
-      it 'returns card draw from deck message' do
-        result = turn_result.request_message
-        expect(result).to match(/#{TurnResult::TAKE_DECK}/)
-      end
-
-      it 'does not show the rank drawn from the deck' do
-        result = turn_result.request_message
-        expect(result).to_not match(/#{other_rank}/)
-        expect(result).to_not match(/#{rank_requested}/)
-      end
     end
 
-    context 'when player is out of cards and deck is out of cards' do
+    context 'when player has cards' do
       let(:turn_result) do
-        TurnResult.new(current_player: current_player)
+        TurnResult.new(current_player: current_player, opponent_player: opponent_player, rank_requested: rank_requested)
       end
 
-      it 'returns out of cards message' do
+      it 'does not return out of cards message' do
         result = turn_result.request_message
-        expect(result).to match(/#{current_player_name}.*#{TurnResult::NO_CARDS}/)
-      end
-
-      it 'does not return card draw from deck message' do
-        result = turn_result.request_message
-        expect(result).to_not match(/#{TurnResult::TAKE_DECK}/)
-      end
-
-      it 'returns deck empty message' do
-        result = turn_result.request_message
-        expect(result).to match(/#{current_player_name}.*#{TurnResult::EMPTY_DECK}/)
-      end
-
-      it 'does not return go again message' do
-        result = turn_result.request_message
-        expect(result).to_not match(/#{current_player_name}.*#{TurnResult::GO_AGAIN}/)
-      end
-
-      it 'returns disqualified message' do
-        result = turn_result.request_message
-        expect(result).to match(/#{TurnResult::DISQUALIFIED}/)
+        expect(result).to_not match(/#{current_player_name}.*#{TurnResult::NO_CARDS}/)
       end
     end
   end
@@ -140,12 +99,56 @@ describe TurnResult do
   end
 
   describe '#result_message' do
-    context 'when player does not have cards' do
-      let(:turn_result) { TurnResult.new(current_player: current_player) }
+    context 'when player is out of cards and deck has cards' do
+      let(:turn_result) do
+        TurnResult.new(current_player: current_player, card_received_deck: Card.new(rank_requested, 'Spades'))
+      end
 
-      it 'returns an empty string' do
+      it 'does not return deck empty message' do
         result = turn_result.result_message
-        expect(result).to eq ''
+        expect(result).to_not match(/#{TurnResult::EMPTY_DECK}/)
+      end
+
+      it 'returns go again message' do
+        result = turn_result.result_message
+        expect(result).to match(/#{current_player_name}.*#{TurnResult::GO_AGAIN}/)
+      end
+
+      it 'returns card draw from deck message' do
+        result = turn_result.result_message
+        expect(result).to match(/#{TurnResult::TAKE_DECK}/)
+      end
+
+      it 'does not show the rank drawn from the deck' do
+        result = turn_result.result_message
+        expect(result).to_not match(/#{other_rank}/)
+        expect(result).to_not match(/#{rank_requested}/)
+      end
+    end
+
+    context 'when player is out of cards and deck is out of cards' do
+      let(:turn_result) do
+        TurnResult.new(current_player: current_player)
+      end
+
+      it 'does not return card draw from deck message' do
+        result = turn_result.result_message
+        expect(result).to_not match(/#{TurnResult::TAKE_DECK}/)
+      end
+
+      it 'returns deck empty message' do
+        result = turn_result.result_message
+        expect(result).to match(/#{TurnResult::EMPTY_DECK}/)
+      end
+
+      it 'does not return go again message' do
+        result = turn_result.result_message
+        expect(result).to_not match(/#{current_player_name}.*#{TurnResult::GO_AGAIN}/)
+      end
+
+      it 'returns disqualified message' do
+        result = turn_result.result_message
+        expect(result).to match(/#{TurnResult::DISQUALIFIED}/)
       end
     end
 

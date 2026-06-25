@@ -23,17 +23,11 @@ class TurnResult
   end
 
   def request_message
-    result = ''
     if player_out_of_cards?
-      result = "#{current_player.name} #{NO_CARDS}. "
-      result += "#{current_player.name} #{TAKE_DECK} card from the deck. " unless card_received_deck.nil?
-      result += "#{EMPTY_DECK}. #{current_player.name} is #{DISQUALIFIED}. " if deck_empty?
-      result += "#{current_player.name} #{GO_AGAIN}. " if go_again?
+      "#{current_player.name} #{NO_CARDS}. "
     else
-      result = "#{current_player.name} #{REQUEST} #{rank_requested} from #{opponent_player.name}."
+      "#{current_player.name} #{REQUEST} #{rank_requested} from #{opponent_player.name}."
     end
-
-    result
   end
 
   def action_message
@@ -52,6 +46,9 @@ class TurnResult
     if card_received_deck
       card_str = rank_received == rank_requested ? rank_requested : 'card'
       result += "#{current_player.name} #{TAKE_DECK} #{card_str} from the deck. "
+    elsif deck_empty?
+      result += "#{EMPTY_DECK}. "
+      result += "#{current_player.name} is #{DISQUALIFIED}. " if player_out_of_cards?
     end
 
     result += "#{current_player.name} #{GO_AGAIN}. " if go_again?
