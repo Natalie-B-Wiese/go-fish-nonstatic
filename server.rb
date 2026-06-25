@@ -24,7 +24,7 @@ class Server < Sinatra::Base
   end
 
   get '/' do
-    if authenticated?(session)
+    if authenticated?(session[:api_key])
       if self.class.game.started?
         if self.class.game.game_over?
           redirect '/game-over'
@@ -47,7 +47,7 @@ class Server < Sinatra::Base
   get '/game' do
     respond_to do |f|
       f.html do
-        if authenticated?(session) && self.class.game.started? && !self.class.game.game_over?
+        if authenticated?(session[:api_key]) && self.class.game.started? && !self.class.game.game_over?
           slim :game, locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key],
                                 game: self.class.game }
         else
@@ -66,7 +66,7 @@ class Server < Sinatra::Base
   end
 
   get '/game-over' do
-    if authenticated?(session) && self.class.game.started? && self.class.game.game_over?
+    if authenticated?(session[:api_key]) && self.class.game.started? && self.class.game.game_over?
       slim :game_over,
            locals: { name: self.class.api_keys[session[:api_key]], api_key: session[:api_key], game: self.class.game }
     else
@@ -118,24 +118,26 @@ class Server < Sinatra::Base
   end
 
   def authenticate!
-    auth
-
-    halt 401 unless auth.provided? && auth.basic?
-
-    # return a status code of 403
-    halt 401 unless self.class.api_keys.key?(auth.username)
+    halt 401 unless authenticated?
   end
 
   def auth
     Rack::Auth::Basic::Request.new(request.env)
   end
 
-  def authenticated?(session)
-    !!self.class.api_keys[session[:api_key]]
+  # if api_key is nil, it will treat it like a bot
+  def authenticated?(api_key = nil)
+    if api_key.nil?
+      return false unless auth.provided? && auth.basic?
+
+      api_key = auth.username
+    end
+
+    self.class.api_keys.key?(api_key)
   end
 
   post '/request-card' do
-    return redirect '/' unless authenticated?(session)
+    return redirect '/' unless authenticated?(session[:api_key])
     return redirect if self.class.api_keys[session[:api_key]] != self.class.game.current_player.name
 
     opponent_name = params[:opponent_name]
@@ -145,7 +147,7 @@ class Server < Sinatra::Base
   end
 
   post '/take-deck-card' do
-    return redirect '/' unless authenticated?(session)
+    return redirect '/' unless authenticated?(session[:api_key])
     return redirect if self.class.api_keys[session[:api_key]] != self.class.game.current_player.name
     return redirect unless self.class.game.current_player.out_of_cards?
 
@@ -157,7 +159,7 @@ class Server < Sinatra::Base
   end
 
   get '/lobby' do
-    if self.class.game.started? || !authenticated?(session)
+    if self.class.game.started? || !authenticated?(session[:api_key])
       redirect '/'
     else
       slim :lobby,

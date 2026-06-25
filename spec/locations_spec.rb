@@ -51,6 +51,13 @@ describe Server, type: :request do
       it 'prevents unauthorized bots' do
         get '/game', {}, { 'HTTP_ACCEPT' => 'application/json', 'CONTENT_TYPE' => 'application/json' }
         expect(last_response.status).to eq(401)
+
+        wrong_api_key = '1431AHDU'
+        encoded = Base64.encode64("#{wrong_api_key}:X").strip
+
+        get '/game', {},
+            { 'HTTP_ACCEPT' => 'application/json', 'CONTENT_TYPE' => 'application/json', 'HTTP_AUTHORIZATION' => "Basic #{encoded}" }
+        expect(last_response.status).to eq(401)
       end
     end
 
