@@ -4,6 +4,13 @@ require_relative 'book'
 require_relative 'player'
 
 class Game
+  # leave false unless bots are playing without a human
+  BEGIN_AUTOMATICALLY = false
+
+  # The number of players before game is automatically begun
+  # It is ignored if begin automatically is false
+  NUM_PLAYERS_TO_BEGIN = 2
+
   SMALL_GAME_CARDS = 7
   BIG_GAME_CARDS = 5
   BOOKS_TO_WIN = (Card::SUITS.length * Card::RANKS.length) / Book::SIZE
@@ -31,6 +38,7 @@ class Game
   def add_player(player_name)
     player = Player.new(player_name)
     @players.push(player)
+    start if BEGIN_AUTOMATICALLY && players.length == NUM_PLAYERS_TO_BEGIN
   end
 
   def add_turn_result_to_feed(turn_result)
