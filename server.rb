@@ -105,13 +105,19 @@ class Server < Sinatra::Base
     respond_to do |f|
       f.json do
         authenticate!
+        puts 'after authenticate'
 
         # TODO: perhaps handle case where bot is out of cards?
-        data = JSON.parse(request.body.read)
-        rank = data['rank']
-        opponent_name = data['player']
+        # data = JSON.parse(request.body.read)
+        puts 'after data'
+        # rank = data['rank']
+        # opponent_name = data['player']
+
+        rank = params[:rank]
+        opponent_name = params[:player]
 
         request_card(opponent_name, rank)
+        puts 'after request_card'
 
         self.class.game.data(current_bot_player).to_json
       end
