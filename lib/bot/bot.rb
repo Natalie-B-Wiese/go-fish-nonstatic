@@ -1,6 +1,7 @@
 require_relative 'api_client'
 require_relative 'strategy'
 require_relative 'strategy/medium'
+require_relative 'strategy/hard'
 
 class Bot
   NAMES = %w[Joe Hal Max Ada Eve Rex Dot Sam Ace Kit
