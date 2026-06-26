@@ -5,7 +5,7 @@ require_relative 'player'
 
 class Game
   # leave false unless bots are playing without a human
-  BEGIN_AUTOMATICALLY = false
+  BEGIN_AUTOMATICALLY = true
 
   # The number of players before game is automatically begun
   # It is ignored if begin automatically is false
