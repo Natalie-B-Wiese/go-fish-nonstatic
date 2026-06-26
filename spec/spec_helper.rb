@@ -1,45 +1,44 @@
-require 'rack/test'
 require 'rspec'
+require 'rack/test'
 require 'capybara'
-require 'capybara-playwright-driver'
 require 'capybara/dsl'
 require 'json_matchers/rspec'
 
 ENV['RACK_ENV'] = 'test'
+
 require_relative '../server'
+
+JsonMatchers.schema_root = 'spec/support/schemas'
 
 Capybara.register_driver :playwright do |app|
   Capybara::Playwright::Driver.new(app, browser_type: :chromium, headless: false)
 end
 
 RSpec.configure do |config|
-  config.expect_with :rspec do |expectations|
-    # This option will default to `true` in RSpec 4. It makes the `description`
-    # and `failure_message` of custom matchers include text for helper methods
-    # defined using `chain`, e.g.:
-    #     be_bigger_than(2).and_smaller_than(4).description
-    #     # => "be bigger than 2 and smaller than 4"
-    # ...rather than:
-    #     # => "be bigger than 2"
-    expectations.include_chain_clauses_in_custom_matcher_descriptions = true
-
-    # ^ Capybara
-    config.include Capybara::DSL
-    config.before { Capybara.app = Server.new }
-    config.after { Server.reset! }
-
-    # ^ Playwright
-    config.before(:each, :js) do
-      Capybara.current_driver = :playwright
-    end
-
-    # ^ Rspec f
-    config.filter_run_when_matching :focus
-  end
-
   config.mock_with :rspec do |mocks|
     mocks.verify_partial_doubles = true
   end
+
+  # ^ Capybara (system specs only, so the DSL's `all` finder doesn't shadow
+  # RSpec's `all` matcher in unit specs)
+  config.include Capybara::DSL, type: :system
+
+  config.before(:each, type: :system) do
+    Capybara.app = App.new
+  end
+
+  config.before(:each, type: :request) do
+  end
+
+  config.after(:each, type: :system) { App.reset! }
+
+  # ^ Playwright
+  config.before(:each, :js) do
+    Capybara.current_driver = :playwright
+  end
+
+  # ^ Rspec focus
+  config.filter_run_when_matching :focus
 
   config.shared_context_metadata_behavior = :apply_to_host_groups
 end
