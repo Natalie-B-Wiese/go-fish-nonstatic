@@ -14,7 +14,7 @@ class Bot
     @strategy = strategy
     @last_state_key = nil
     @last_results_count = 0
-    @name = "Bot #{NAMES.sample}"
+    @name = generate_bot_name
     @game_over = false
   end
 
@@ -22,7 +22,12 @@ class Bot
 
   def try_to_join
     api_key = client.join(name)
-    puts "Joined as #{name} (API key: #{api_key})"
+    if api_key.nil?
+      puts "Failed to join as #{name}!"
+      @name = generate_bot_name
+    else
+      puts "Joined as #{name} (API key: #{api_key})"
+    end
   end
 
   def game_over? = game_over
@@ -105,5 +110,9 @@ class Bot
     puts "[Turn #{turn_index}] #{marker} | Players: #{players.map { |p| p['name'] }.join(', ')} | Current: #{current_name(players:, turn_index:)}"
     log_hand(hand)
     log_books(players)
+  end
+
+  def generate_bot_name
+    "Bot #{NAMES.sample}"
   end
 end
