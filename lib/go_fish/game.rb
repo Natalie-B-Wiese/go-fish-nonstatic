@@ -5,7 +5,8 @@ require_relative 'player'
 
 class Game
   # leave false unless bots are playing without a human
-  BEGIN_AUTOMATICALLY = true
+  # Setting it true causes server_spec_html.rb tests to fail
+  BEGIN_AUTOMATICALLY = false
 
   # The number of players before game is automatically begun
   # It is ignored if begin automatically is false
