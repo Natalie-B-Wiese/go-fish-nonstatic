@@ -58,16 +58,22 @@ class Server < Sinatra::Base
 
   post '/join' do
     name = params[:name] || JSON.parse(request.body.read)['name']
-    return redirect '/' if invalid_name?(name)
-
     api_key = Base64.urlsafe_encode64("#{name}:X")
 
-    add_player(name, api_key)
-
     respond_to do |f|
-      f.html { redirect '/lobby' }
+      f.html do
+        return redirect '/' if invalid_name?(name)
 
-      f.json { { 'api_key' => api_key }.to_json }
+        add_player(name, api_key)
+        redirect '/lobby'
+      end
+
+      f.json do
+        halt 401 if invalid_name?(name)
+
+        add_player(name, api_key)
+        { 'api_key' => api_key }.to_json
+      end
     end
   end
 

@@ -37,6 +37,26 @@ describe Server, type: :request do
       expect(last_response).to match_json_schema('join')
     end
 
+    context 'when another bot tries to join with same name as another player' do
+      let(:name) { 'Bot' }
+
+      before do
+        create_and_join_bot(name)
+
+        # create second bot
+        post '/join', { 'name' => name }.to_json,
+             { 'HTTP_ACCEPT' => 'application/json', 'CONTENT_TYPE' => 'application/json' }
+      end
+
+      it 'throws 401 error on second bot' do
+        expect(last_response.status).to eq(401)
+      end
+
+      it 'does not add the second bot to the game' do
+        expect(Server.game.players.length).to eq(1)
+      end
+    end
+
     # game get and game post
   end
 
