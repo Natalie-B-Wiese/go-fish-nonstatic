@@ -74,7 +74,7 @@ RSpec.describe Server, type: :request do
   end
 
   context 'before game is started' do
-    it 'is possible to join a lobby', :js do
+    it 'is possible to join a lobby' do
       visit '/'
       fill_in :name, with: 'John'
       click_on 'Join'
@@ -89,6 +89,22 @@ RSpec.describe Server, type: :request do
       click_on 'Join'
       expect(page).to have_content('Lobby')
       expect(page).to have_content('Henry')
+    end
+
+    it 'does not accept empty names' do
+      visit '/'
+      fill_in :name, with: ''
+      click_on 'Join'
+      sleep(1)
+      expect(page).to have_current_path('/')
+    end
+
+    it 'does not accept names that are only spaces' do
+      visit '/'
+      fill_in :name, with: '  '
+      click_on 'Join'
+      sleep(1)
+      expect(page).to have_current_path('/')
     end
 
     it 'allows multiple players to join' do
@@ -142,7 +158,7 @@ RSpec.describe Server, type: :request do
         create_players_from_sessions([session1])
       end
 
-      it 'does not allow player to start the game', :js do
+      it 'does not allow player to start the game' do
         expect(session1).to have_button('Start', disabled: true)
       end
     end

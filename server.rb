@@ -58,6 +58,8 @@ class Server < Sinatra::Base
 
   post '/join' do
     name = params[:name] || JSON.parse(request.body.read)['name']
+    return redirect '/' unless valid_name?(name)
+
     api_key = Base64.urlsafe_encode64("#{name}:#{(Time.now.to_f * 1000).to_i}")
 
     add_player(name, api_key)
@@ -133,6 +135,10 @@ class Server < Sinatra::Base
   end
 
   private
+
+  def valid_name?(name)
+    !name.strip.empty?
+  end
 
   def authenticate!
     halt 401 unless authenticated?
