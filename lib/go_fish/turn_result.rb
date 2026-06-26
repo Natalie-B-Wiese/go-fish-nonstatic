@@ -71,7 +71,7 @@ class TurnResult
     end
   end
 
-  def data
+  def as_json
     {
       'current_player' => current_player.name,
       'rank' => rank_requested,

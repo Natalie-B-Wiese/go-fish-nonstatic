@@ -73,7 +73,7 @@ class Player
     book
   end
 
-  def data
+  def as_json
     {
       'name' => name,
       'books' => books.map(&:rank),

@@ -134,7 +134,7 @@ describe Server, type: :request do
         get '/game', {}, header(bot1_authorization)
 
         hand_result = JSON.parse(last_response.body)['hand']
-        expected_hand = Server.game.players[0].cards.map(&:data)
+        expected_hand = Server.game.players[0].cards.map(&:as_json)
         expect(hand_result).to eq expected_hand
       end
 
@@ -142,7 +142,7 @@ describe Server, type: :request do
         get '/game', {}, header(bot2_authorization)
 
         hand_result = JSON.parse(last_response.body)['hand']
-        expected_hand = Server.game.players[1].cards.map(&:data)
+        expected_hand = Server.game.players[1].cards.map(&:as_json)
         expect(hand_result).to eq expected_hand
       end
     end
@@ -169,7 +169,7 @@ describe Server, type: :request do
     it 'has the correct hand' do
       post '/game', { 'rank' => 'A', 'player' => 'Bot 2' }.to_json, header(bot1_authorization)
       hand_result = JSON.parse(last_response.body)['hand']
-      expected_hand = Server.game.players[0].cards.map(&:data)
+      expected_hand = Server.game.players[0].cards.map(&:as_json)
       expect(hand_result).to eq expected_hand
     end
 

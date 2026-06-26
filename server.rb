@@ -85,7 +85,7 @@ class Server < Sinatra::Base
       bot_request_card
     end
 
-    self.class.game.data(current_bot_player).to_json
+    self.class.game.as_json(current_bot_player).to_json
   end
 
   # Only for human (html)
@@ -191,6 +191,6 @@ class Server < Sinatra::Base
   def get_game_json
     authenticate!
 
-    self.class.game.data(current_bot_player).to_json
+    self.class.game.as_json(current_bot_player).to_json
   end
 end
