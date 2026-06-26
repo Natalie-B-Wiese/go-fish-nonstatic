@@ -6,12 +6,15 @@ require_relative '../lib/go_fish/book'
 RSpec.describe Server, type: :request do
   let(:game) { Server.game }
 
+  def create_named_player_from_session(session:, name:)
+    session.visit '/'
+    session.fill_in :name, with: name
+    session.click_on 'Join'
+  end
+
   def create_players_from_sessions(sessions)
     sessions.each_with_index do |session, i|
-      session.visit '/'
-      name = "Player #{i + 1}"
-      session.fill_in :name, with: name
-      session.click_on 'Join'
+      create_named_player_from_session(session: session, name: "Player #{i + 1}")
     end
   end
 
@@ -46,9 +49,7 @@ RSpec.describe Server, type: :request do
   end
 
   it 'reroutes users on nonstarted game to lobby' do
-    visit '/'
-    fill_in :name, with: 'John'
-    click_on 'Join'
+    create_named_player_from_session(session: page, name: 'John')
 
     visit '/game'
     expect(page).to have_current_path('/lobby')
@@ -92,17 +93,13 @@ RSpec.describe Server, type: :request do
     end
 
     it 'does not accept empty names' do
-      visit '/'
-      fill_in :name, with: ''
-      click_on 'Join'
+      create_named_player_from_session(session: page, name: '')
       sleep(1)
       expect(page).to have_current_path('/')
     end
 
     it 'does not accept names that are only spaces' do
-      visit '/'
-      fill_in :name, with: '  '
-      click_on 'Join'
+      create_named_player_from_session(session: page, name: '   ')
       sleep(1)
       expect(page).to have_current_path('/')
     end
@@ -120,30 +117,21 @@ RSpec.describe Server, type: :request do
       end
     end
 
-    it 'gives players of the same name different api keys' do
+    it 'does not accept players of the same name' do
       session1 = Capybara::Session.new(:rack_test, Server.new)
       session2 = Capybara::Session.new(:rack_test, Server.new)
-      api_keys = []
       [session1, session2].each do |session|
-        session.visit '/'
-        session.fill_in :name, with: 'John'
-        session.click_on 'Join'
+        create_named_player_from_session(session: session, name: 'John')
         sleep(1) # Pauses the test for 1 second
-
-        meta_tag = session.find("meta[name='api_key']", visible: false)
-        api_key = meta_tag[:content]
-
-        api_keys.push(api_key)
       end
 
-      expect(api_keys[0]).not_to eq api_keys[1]
+      expect(session1).to have_current_path('/lobby')
+      expect(session2).to have_current_path('/')
     end
 
     context 'when a player has already entered a name' do
       it 'redirects to lobby' do
-        visit '/'
-        fill_in :name, with: 'John'
-        click_on 'Join'
+        create_named_player_from_session(session: page, name: 'John')
 
         visit '/'
         expect(page).to have_content('Lobby')

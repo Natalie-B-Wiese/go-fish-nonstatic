@@ -28,6 +28,10 @@ class Game
     @feed = []
   end
 
+  def includes_player_with_name?(player_name)
+    players.map(&:name).include?(player_name)
+  end
+
   def player_by_name(player_name)
     players[players.index { |player| player.name == player_name }]
   end

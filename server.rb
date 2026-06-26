@@ -58,9 +58,9 @@ class Server < Sinatra::Base
 
   post '/join' do
     name = params[:name] || JSON.parse(request.body.read)['name']
-    return redirect '/' unless valid_name?(name)
+    return redirect '/' if invalid_name?(name)
 
-    api_key = Base64.urlsafe_encode64("#{name}:#{(Time.now.to_f * 1000).to_i}")
+    api_key = Base64.urlsafe_encode64("#{name}:X")
 
     add_player(name, api_key)
 
@@ -136,8 +136,8 @@ class Server < Sinatra::Base
 
   private
 
-  def valid_name?(name)
-    !name.strip.empty?
+  def invalid_name?(name)
+    name.strip.empty? || self.class.game.includes_player_with_name?(name)
   end
 
   def authenticate!
