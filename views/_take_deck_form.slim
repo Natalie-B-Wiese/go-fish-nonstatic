@@ -1,0 +1,9 @@
+/ Locals:
+/ is_my_turn (a boolean)
+
+form.game-actions.op-stack.items-stretch.gap-sm action="/take-deck-card" method="POST"
+	.game-actions__options.op-split.items-stretch.gap-sm
+	- if is_my_turn
+		button.btn.btn--primary type="submit" Draw from Deck
+	- else
+		button.btn.btn--primary type="submit" disabled="disabled" Draw from Deck

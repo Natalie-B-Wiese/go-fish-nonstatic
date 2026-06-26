@@ -1,0 +1,26 @@
+/ Locals to pass:
+/ player (a Player object)
+
+details.accordion
+	summary
+		div.accordion__marker
+			i.ph.ph-caret-right.icon.icon--small
+		span.accordion__header #{player.name}
+		div.text-pair.text-pair--inline
+			div
+				| Cards:#{' '}
+				span
+					strong #{player.card_count}
+			div
+				| Books:#{' '}
+				span
+					strong #{player.book_count}
+
+	div.accordion__content
+		div.flex.flex-row.flex-no-wrap.justify-between
+			div.flex.cards-stacked
+				- player.cards.each do |card|
+					img.playing-card.playing-card--sm src="/images/cards/playing-card-back.jpg"
+			div.flex.cards-stacked
+				- player.books.each do |book|
+					img.playing-card.playing-card--sm src="/images/cards/#{book.to_image_name}"

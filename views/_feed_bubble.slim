@@ -1,0 +1,13 @@
+/ Locals:
+/ turn_action (a Turn Result object)
+
+div.feed-bubble.feed-bubble--action
+	div.feed-bubble__content #{turn_action.request_message}
+- unless turn_action.action_message.empty?
+	div.feed-bubble.feed-bubble--response.feed-bubble--unsuccess
+		i.ph.ph-arrow-bend-down-right.icon.icon--medium
+		div.feed-bubble__content #{turn_action.action_message}
+- unless turn_action.result_message.empty?
+	div.feed-bubble.feed-bubble--response
+		i.ph.ph-arrow-bend-down-right.icon.icon--medium
+		div.feed-bubble__content #{turn_action.result_message}

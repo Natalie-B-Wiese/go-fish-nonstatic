@@ -3,7 +3,7 @@ require_relative '../lib/go_fish/game'
 require_relative '../lib/card'
 require_relative '../lib/go_fish/book'
 
-RSpec.describe Server do
+RSpec.describe Server, type: :request do
   let(:game) { Server.game }
 
   def create_players_from_sessions(sessions)
@@ -431,9 +431,9 @@ RSpec.describe Server do
         refresh_sessions(sessions)
       end
 
-      it 'posts 1 message in the feed' do
+      it 'posts 2 message in the feed' do
         session1.within '.feed-content' do
-          expect(session1.find_all('.feed-bubble').count).to eq 1
+          expect(session1.find_all('.feed-bubble').count).to eq 2
         end
       end
 
